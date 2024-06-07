@@ -1,0 +1,166 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+.app-container {
+  text-align: center;
+  position: relative;
+}
+
+.sidebar {
+  position: fixed;
+  margin-left: 7.5%;
+  width: 13%;
+  height: 100vh;
+  padding: 25px;
+  top: 0;
+  left: 0;
+  transform: translateX(-50%);
+  z-index: 1000;
+  background: rgb(252,0,255);
+  background: linear-gradient(-333deg, #0d0f1d 10%, rgba(20,22,39) 52%, rgb(27, 30, 61) 100%);
+    /* box-shadow: 0px 5px 25px rgba(0, 0, 0, .7); */
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar button {
+  margin: 10px 10px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.content {
+  padding-left: 10%;
+  width: 80vw;
+  user-select: none;
+}
+
+.chart-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.chartjs {
+  width: 800px;
+  height: 600px;
+}
+.serie{
+  text-align: left;
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+.fifty{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.list{
+  flex: 1 0 20%; 
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  padding: 10px;
+  background-color: #3b3b3b;
+  border-radius: 7px;
+  border-left: 3px solid rgba(16,217,219,1);
+  border-right: 3px solid rgba(16,217,219,1);
+}
+.scrollButtons {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Adjust the gap between buttons if needed */
+}
+
+/*Spinner*/
+.loader, .loader:before, .loader:after {
+  border-radius: 50%;
+  width: 2.5em;
+  height: 2.5em;
+  animation-fill-mode: both;
+  animation: bblFadInOut 1.8s infinite ease-in-out;
+}
+.loader {
+  color: #FFF;
+  font-size: 7px;
+  position: relative;
+  text-indent: -9999em;
+  transform: translateZ(0);
+  animation-delay: -0.16s;
+}
+.loader:before,
+.loader:after {
+  content: '';
+  position: absolute;
+  top: 0;
+}
+.loader:before {
+  left: -3.5em;
+  animation-delay: -0.32s;
+}
+.loader:after {
+  left: 3.5em;
+}
+
+@keyframes bblFadInOut {
+  0%, 80%, 100% { box-shadow: 0 2.5em 0 -1.3em }
+  40% { box-shadow: 0 2.5em 0 0 }
+}
+    
+
+
+/**/
+
+
+/* .scrollButtons button {
+  cursor: pointer;
+  padding: 10px;
+  background-color: #c025ad;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+} */
