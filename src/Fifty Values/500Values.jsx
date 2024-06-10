@@ -1,15 +1,24 @@
 import '../App.css';
+import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons';
 import calculateXY from './get500Values';
+import Graph from './Graph';
 // import calculateXY from './get500Values';
 
 function FiftyValues() {
     // const data = calculateXY(0, 0, 500);
+    const [showGraph, setshowGraph] = useState(false);
+    const [buttonLabel, setButtonLabel] = useState("Voir la représentaion graphique");
+    const toGraph = () => {
+        setshowGraph(prev => !prev)
+        setButtonLabel("Voir les 500 valeurs")
+    };
     const data = calculateXY(0, 0, 500)
     return (
         <div className='fifty'>
-            {data.map(([xVal, yVal], index) => {
+            <button onClick={toGraph}>{buttonLabel}</button>
+            { !showGraph && data.map(([xVal, yVal], index) => {
                 if (index === 0) {
                     return (
                         <div className='list' >
@@ -36,9 +45,10 @@ function FiftyValues() {
                     </div>
                 );
             })}
+            {showGraph && <Graph data={data} />}
             <div className="scrollButtons">
-                <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}><FontAwesomeIcon icon={faCaretUp} /></button>
-                <button onClick={() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })}><FontAwesomeIcon icon={faCaretDown} /></button>
+                <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}><FontAwesomeIcon icon={faCaretUp}/></button>
+                <button onClick={() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })}><FontAwesomeIcon icon={faCaretDown}/></button>
             </div>
         </div>
     );

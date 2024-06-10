@@ -3,7 +3,7 @@ import React from 'react';
 
 const HenonSequences = ({ data }) => {
     const m = 3; // Dimension d'incorporation
-    const t = 1; // Délai de mesure
+    const t = 100; // Délai de mesure
 
     // Fonction pour construire les séquences x^(i)
     const buildSequence = (index) => {

@@ -66,6 +66,10 @@
 .serie{
   text-align: left;
 }
+.small-graph {
+  width: 40%; /* Adjust width as needed */
+  height: auto; /* Auto height to maintain aspect ratio */
+}
 
 @keyframes logo-spin {
   from {
@@ -81,7 +85,10 @@
     animation: logo-spin infinite 20s linear;
   }
 }
-
+.matrice {
+  display: flex;
+  flex-direction: row ;
+}
 .card {
   padding: 2em;
 }

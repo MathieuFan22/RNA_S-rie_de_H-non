@@ -20,7 +20,7 @@
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: rgb(55, 150, 150);
   text-decoration: inherit;
 }
 a:hover {
@@ -41,19 +41,27 @@ h1 {
 }
 
 button {
+  display: flex; /* Use flexbox */
+  justify-content: center; /* Center content horizontally */
+  align-items: center; /* Center content vertically */
   width: 90%;
   border: none;
   border-radius: 8px;
   padding: 0.6em 1.2em;
-  font-size: 100%;
   font-weight: 500;
   font-family: inherit;
-  background: #646cff;
+  background: rgb(55, 150, 150);
   cursor: pointer;
   transition: border-color 0.25s;
+  white-space: nowrap; /* Prevents text from wrapping */
+  overflow: hidden; /* Prevents text overflow */
+  text-overflow: ellipsis; /* Adds ellipsis (...) for overflowed text */
+  font-size: 14px !important;
 }
+
+
 button:hover {
-  border-color: #646cff;
+  border-color: rgb(55, 150, 150);
 }
 button:focus,
 button:focus-visible {

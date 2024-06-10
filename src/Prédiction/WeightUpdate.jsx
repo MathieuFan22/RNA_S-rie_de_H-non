@@ -89,7 +89,17 @@ function WeightUpdate() {
     };
 
     const updateWeights = () => {
-
+        console.log("Begin: Mise à jour des poids");
+        for (let m = 1; m >= 0; m--) {
+            for (let i = 0; i < w[m].length; i++) {
+                for (let j = 0; j < w[m][i].length; j++) {
+                    let deltaWeight = step * delta[1 - m][i] * V[m][j];
+                    w[m][i][j] += deltaWeight;
+                }
+            }
+        }
+        console.log(w);
+        console.log("End: Mise à jour des poids");
     };
 
     const train = () => {

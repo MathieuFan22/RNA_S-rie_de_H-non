@@ -56,6 +56,9 @@ const options= {
       max: 1.5,
       ticks: {
         stepSize: 0.05
+      },
+      grid: {
+        color: 'rgba(220, 220, 220, 0.05)' 
       }
     },
     y: {
@@ -67,6 +70,9 @@ const options= {
       max: 0.5,
       ticks: {
         stepSize: 0.05
+      },
+      grid: {
+        color: 'rgba(220, 220, 220, 0.05)' 
       }
     }
   }
