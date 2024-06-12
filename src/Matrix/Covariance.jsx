@@ -67,28 +67,55 @@ const Covariance = ({ data }) => {
     setEigShowed(true);
     if (resultMatrix) {
       const { values } = eigs(resultMatrix);
-        const roundedValues = values
+      const roundedValues = values
         .map(value => Number(value.toFixed(8)))
-        .map(value => value ** (1/2))
+        .map(value => value ** (1 / 2))
         .filter(value => value !== 0)
         .sort((a, b) => b - a);
       setEigenValues(roundedValues);
     }
-    co
-    nsole.log("eig cal");
-  };
-  const dataForChart = {
-    labels: eigenValues ? eigenValues.map((_, index) => `Value ${index + 1}`) : [],
-    datasets: [
-      {
-        label: 'Eigenvalues',
-        data: eigenValues || [],
-        fill: false,
-        backgroundColor: 'rgba(75,192,192,0.4)',
-        borderColor: 'rgba(75,192,192,1)',
-      },
-    ],
-  };
+    console.log("eig cal");
+};
+
+const coor = eigenValues ? eigenValues.map((_, index) => index) : [];
+const backgroundColors = [];
+const borderColors = [];
+const [pointSize, setPointSize] = useState(4);
+
+
+if (eigenValues) {
+  for (let i = 0; i < eigenValues.length - 1; i++) {
+    const diff = eigenValues[i] - eigenValues[i + 1];
+    if (diff > 0.1 || diff < -0.1) {
+      backgroundColors.push('rgba(75,192,192,0.4)'); // Original color
+      borderColors.push('rgba(255,0,0,1)'); // Red color
+      setPointSize(10)
+    } else {
+      backgroundColors.push('rgba(255,0,0,0.4)'); // Red color
+      borderColors.push('rgba(75,192,192,1)'); // Original color
+    }
+  }
+  // For the last eigenvalue, just push the original color since it has no next value to compare
+  backgroundColors.push('rgba(75,192,192,0.4)');
+  borderColors.push('rgba(75,192,192,1)');
+}
+
+const dataForChart = {
+  labels: coor,
+  datasets: [
+    {
+      label: 'Eigenvalues',
+      data: eigenValues || [],
+      fill: false,
+      backgroundColor: backgroundColors,
+      borderColor: 'rgba(75,192,192,0.4)',
+      pointRadius: pointSize,          // Size of the points
+      // pointHoverRadius: 8,     // Size of the points when hovered
+      // pointBorderWidth: 2,     // Border width of the points
+    },
+  ],
+};
+
 
   const optionsForChart = {
     responsive: true,

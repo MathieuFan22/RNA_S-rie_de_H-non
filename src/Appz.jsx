@@ -3,7 +3,7 @@ import './App.css';
 import WeightUpdate from './Prédiction/WeightUpdate';
 
 
-const App2 = () => {
+const App = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const toPage = (pageIndex) => {
     setCurrentPage(pageIndex);
@@ -23,5 +23,5 @@ const App2 = () => {
   );
 };
 
-export default App2;
+export default App;
 
