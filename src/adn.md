@@ -223,3 +223,15 @@ function WeightUpdate() {
 }
 
 export default WeightUpdate;
+
+[
+    [Var(X¹), Cov(X¹X²), ..., Cov(X¹X^n)],
+    [Cov(X²X¹), Var(X²),  ..., Cov(X²X^n)],
+    .
+    .
+    .
+    [Cov(X^nX¹), Cov(X^nX²),  ..., Var(X^n)],
+]
+
+Var(X) = Somme de i=1 à n de (xi - Xbar)² avec Xbar la moyenne
+Cov(XY) = Somme de i=1 à n de (xi - Xbar)(yi - Ybar) avec Xbar et Ybar les moyennes

@@ -1,84 +1,117 @@
-import React, { useState, useRef } from 'react';
-import './Test.css';
-import FiftyValues from './Fifty Values/500Values';
-import Graph from './Fifty Values/Graph';
-import HenonSequences from './HenonSequence';
-import calculateXY from './Fifty Values/get500Values';
-import Covariance from './Matrix/Covariance';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons';
+import React, { useState, useEffect } from 'react';
+import '../App.css';
+import { Chart } from 'react-chartjs-2';
+import { eigs } from 'mathjs';
 
 
-const App = () => {
-  const [currentPage, setCurrentPage] = useState(0);
-  const datas = calculateXY(0, 0, 500)
-  // const data= [1, -0.4, 1.076, -0.7408864, 0.55432228, 0.34755161]
-  const data = (datas.map(point => (point[0]))).slice(1)
-  const toPage = (pageIndex) => {
-    setCurrentPage(pageIndex);
+const Covariance = ({data}) => {
+  const [covMatrix, setCovMatrix] = useState([]);
+  const [errorData, setErrorData] = useState([]);
+
+  const m = 3; // Dimension d'incorporation
+const t = 100; // Délai de mesure
+
+// Fonction pour construire les séquences x^(i)
+const buildSequence = (index) => {
+  const sequence = [];
+  for (let j = 0; j < m; j++) {
+    const dataIndex = index + j * t;
+    if (dataIndex < data.length) {
+      sequence.push(data[dataIndex]);
+    } else {
+      break; // Sortir si l'index dépasse la longueur des données
+    }
+  }
+  return sequence;
+};
+
+// Construire toutes les séquences x^(i)
+const buildAllSequences = () => {
+  const sequences = [];
+  for (let i = 0; i <= data.length - (m - 1) * t; i++) {
+    const sequence = buildSequence(i);
+    if (sequence.length === m) {
+      sequences.push(sequence);
+    }
+  }
+  return sequences;
+};
+
+// Fonction pour calculer la matrice de covariance
+const covarianceMatrix = (matrix) => {
+  const numCols = matrix[0].length;
+  const numRows = matrix.length;
+  const means = matrix[0].map((_, colIndex) => matrix.map(row => row[colIndex]).reduce((sum, val) => sum + val, 0) / numRows);
+  const centeredMatrix = matrix.map(row => row.map((val, colIndex) => val - means[colIndex]));
+  const transposeMatrix = math.transpose(centeredMatrix);
+  const covMatrix = math.multiply(transposeMatrix, centeredMatrix).map(row => row.map(val => val / (numRows - 1)));
+  return covMatrix;
+};
+
+
+  useEffect(() => {
+    const sequences = buildAllSequences();
+    const covMat = covarianceMatrix(sequences);
+
+    // Calculer les valeurs propres de la matrice de covariance
+    const { values } = eigs(covMat);
+
+    // Trier les valeurs propres par ordre décroissant
+    const sortedEigenvalues = values.sort((a, b) => b - a);
+
+    // Calculer les erreurs d'approximation moyenne El
+    const errors = sortedEigenvalues.map((value, index) => ({
+      l: index,
+      El: Math.sqrt(value)
+    }));
+
+    // Stocker les données d'erreur pour l'affichage du graphique
+    setErrorData(errors);
+
+    // Mettre à jour la matrice de covariance dans l'état
+    setCovMatrix(covMat);
+  }, []);
+
+  // Préparer les données pour le graphique
+  const chartData = {
+    labels: errorData.map(entry => entry.l),
+    datasets: [
+      {
+        label: 'Erreur d\'approximation moyenne (El)',
+        data: errorData.map(entry => entry.El.toFixed(2)),
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        borderColor: 'rgba(75, 192, 192, 1)',
+        borderWidth: 1,
+        pointRadius: 2,
+        pointBackgroundColor: 'rgba(75, 192, 192, 1)',
+        pointBorderColor: '#fff',
+        pointHoverRadius: 5,
+        pointHoverBackgroundColor: 'rgba(75, 192, 192, 1)',
+        pointHoverBorderColor: 'rgba(220, 220, 220, 1)',
+      },
+    ],
   };
 
-  const [expand, setExpand] = useState("expand");
-  const [isVisible, setIsVisible] = useState(true);
-  const handleMenuClick = () => {
-    console.log("dfdf");
-    setExpand((prevExpand) => (prevExpand === "expand" ? "unexpand" : "expand"));
-    if (!isVisible) {
-     setTimeout(()=> {
-      setIsVisible(true)
-     }, 200);
-    }
-    setIsVisible(false)
-  }
   return (
-    <div className='root'>
-      <div id="sidebar" className={expand}>
-        <div id="header">
-          <div style={{ display: isVisible ? 'block' : 'none' }}>Image</div>
-          <div style={{ display: isVisible ? 'block' : 'none' }} id="title">Astrovibe</div>
-          <div id='burger-menu' onClick={handleMenuClick}>
-            <div className="burger">
-            </div>
-          </div>
-        </div>
-        <ul>
-          <li className="lia lis" onClick={() => toPage(0)}>
-            <FontAwesomeIcon className="icon" icon={faCaretUp} />
-            <span className='li-el' style={{ display: isVisible ? 'block' : 'none' }} >500 Values</span>
-          </li>
-          <li className="lia lis" onClick={() => toPage(1)}>
-            <FontAwesomeIcon className="icon" icon={faCaretUp} />
-            <span className='li-el' style={{ display: isVisible ? 'block' : 'none' }} >Graph</span>
-          </li>
-          <li className="lia lis" onClick={() => toPage(2)}>
-            <FontAwesomeIcon className="icon" icon={faCaretUp} />
-            <span className='li-el' style={{ display: isVisible ? 'block' : 'none' }} >Série temporelle</span>
-          </li>
-          <li className="lia lis" onClick={() => toPage(3)}>
-            <FontAwesomeIcon className="icon" icon={faCaretUp} />
-            <span className='li-el' style={{ display: isVisible ? 'block' : 'none' }} >Matrice de covariance</span>
-          </li>
-
-        </ul>
-
-
-
-
-
-      </div>
-      <div id="container" className='content'>
-        {currentPage === 0 && <FiftyValues />}
-        {currentPage === 1 && < Graph />}
-        {currentPage === 2 && < HenonSequences data={data} />}
-        {currentPage === 3 && < Covariance data={data} />}
-
-        {/*currentPage === 3 && <Covariance data={data}/>}
-        {currentPage === 4 && <EigenvalueCalculator data={data} />}
-        {currentPage === 4 && <LanczosEigenvalueCalculator />} */}
+    <div className="App">
+      <h1>Matrice de Covariance</h1>
+      <table>
+        <tbody>
+          {covMatrix.map((row, rowIndex) => (
+            <tr key={rowIndex}>
+              {row.map((value, colIndex) => (
+                <td key={colIndex}>{value.toFixed(2)}</td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <h1>Erreur d'approximation moyenne (El)</h1>
+      <div className="chart-container">
+        <Chart type="line" data={chartData} />
       </div>
     </div>
   );
 };
 
-export default App;
-
+export default Covariance;

@@ -1,20 +1,31 @@
 import '../App.css';
 
 function WeightUpdate() {
-    const prototype = [0, 1, 1];
+    const prototype = [0, 1, 1, 0, 1, 0];
     const step = 0.1;
     const desiredOutput = [1, 0.5, 0.3];
-    const w = [
-        [
-            [0.1, 0.1],
-            [0.2, 0.3],
-            [0.1, 0.2]
-        ],
-        [
-            [0.2, 0.2, 0.2],
-            [0.1, 0.3, 0.1]
-        ]
-    ];
+    function getRandomWeight(min, max) {
+        return Math.random() * (max - min) + min;
+    }
+    
+    function initializeWeights(layers) {
+        const weights = [];
+        for (let i = 0; i < layers.length - 1; i++) {
+            const layerWeights = [];
+            for (let j = 0; j < layers[i]; j++) {
+                const neuronWeights = [];
+                for (let k = 0; k < layers[i + 1]; k++) {
+                    neuronWeights.push(Number(getRandomWeight(0.1, 0.3).toFixed(2)));
+                }
+                layerWeights.push(neuronWeights);
+            }
+            weights.push(layerWeights);
+        }
+        return weights;
+    }
+    
+    const layers = [6, 2, 3];
+    const w = initializeWeights(layers);
 
     const V = [[...prototype], [], []];
     const delta = [[], []];

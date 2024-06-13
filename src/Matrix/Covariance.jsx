@@ -1,62 +1,55 @@
+// Covariance.js
+
 import React, { useState, useEffect } from 'react';
 import { eigs } from 'mathjs';
 import '../App.css';
-import { multiplyMatrix, transposeMatrix } from './matrixOperation';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, LineElement, CategoryScale, LinearScale, PointElement, Title, Tooltip, Legend } from 'chart.js';
+import { transposeMatrix, meanMatrix, covarianceMatrix } from './matrixOperation'; // Importer les fonctions
 
 ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement, Title, Tooltip, Legend);
 
-
-
 const Covariance = ({ data }) => {
   const [loading, setLoading] = useState(true);
-  const [resultMatrix, setResultMatrix] = useState(null);
+  const [sequences, setSequences] = useState([]);
+  const [covMatrix, setCovMatrix] = useState([]);
   const [eigenValues, setEigenValues] = useState(null);
   const [eigShowed, setEigShowed] = useState(false);
+  const [errorData, setErrorData] = useState([]);
 
-  const transposeMatrix = matrix => {
-    return matrix[0].map((_, colIndex) => matrix.map(row => row[colIndex]));
-  };
-  
-  const multiplyMatrix = (matrixA, matrixB) => {
-    const result = Array(matrixA.length)
-      .fill(0)
-      .map(() => Array(matrixB[0].length).fill(0));
-  
-    for (let i = 0; i < matrixA.length; i++) {
-      for (let j = 0; j < matrixB[0].length; j++) {
-        for (let k = 0; k < matrixA[0].length; k++) {
-          result[i][j] += matrixA[i][k] * matrixB[k][j];
-        }
-      }
-    }
-    return result;
-  };
-
-  const m = 10; // Dimension d'incorporation
+  const m = 15; // Dimension d'incorporation
   const t = 1; // Délai de mesure
 
-  // Fonction pour construire les séquences x^(i)
   const buildSequence = (index) => {
     const sequence = [];
     for (let j = 0; j < m; j++) {
-      sequence.push(data[index + j * t]);
+      const dataIndex = index + j * t;
+      if (dataIndex < data.length) {
+        sequence.push(data[dataIndex]);
+      } else {
+        break;
+      }
     }
     return sequence;
   };
 
+  const buildAllSequences = () => {
+    const sequences = [];
+    for (let i = 0; i <= data.length - (m - 1) * t; i++) {
+      const sequence = buildSequence(i);
+      if (sequence.length === m) {
+        sequences.push(sequence);
+      }
+    }
+    return sequences;
+  };
+
   useEffect(() => {
     const calculateCovariance = async () => {
-      // Construire matrixX en utilisant buildSequence
-      const matrixX = [];
-      for (let i = 0; i < data.length - (m - 1) * t; i++) {
-        matrixX.push(buildSequence(i));
-      }
-
-      const matrixXt = transposeMatrix(matrixX);
-      const resultMatrix = multiplyMatrix(matrixX, matrixXt);
-      setResultMatrix(resultMatrix);
+      const seq = buildAllSequences();
+      setSequences(seq);
+      const covMat = covarianceMatrix(seq);
+      setCovMatrix(covMat);
       setLoading(false);
     };
 
@@ -65,77 +58,77 @@ const Covariance = ({ data }) => {
 
   const eigenValue_calculator = () => {
     setEigShowed(true);
-    if (resultMatrix) {
-      const { values } = eigs(resultMatrix);
+    if (covMatrix) {
+      const { values } = eigs(covMatrix);
       const roundedValues = values
-        .map(value => Number(value.toFixed(8)))
-        .map(value => value ** (1 / 2))
-        .filter(value => value !== 0)
-        .sort((a, b) => b - a);
+      .map(e => Number(e.toFixed(2)))
+      .sort((a, b) => b - a);
       setEigenValues(roundedValues);
     }
     console.log("eig cal");
-};
+  };
 
-const coor = eigenValues ? eigenValues.map((_, index) => index) : [];
-const backgroundColors = [];
-const borderColors = [];
-const [pointSize, setPointSize] = useState(4);
+  const coor = eigenValues ? eigenValues.map((_, index) => index) : [];
+  const backgroundColors = [];
+  const borderColors = [];
+  const labelColors = [];
+  const pointSize = [];
 
-
-if (eigenValues) {
-  for (let i = 0; i < eigenValues.length - 1; i++) {
-    const diff = eigenValues[i] - eigenValues[i + 1];
-    if (diff > 0.1 || diff < -0.1) {
-      backgroundColors.push('rgba(75,192,192,0.4)'); // Original color
-      borderColors.push('rgba(255,0,0,1)'); // Red color
-      setPointSize(10)
-    } else {
-      backgroundColors.push('rgba(255,0,0,0.4)'); // Red color
-      borderColors.push('rgba(75,192,192,1)'); // Original color
+  if (eigenValues) {
+    for (let i = 0; i < eigenValues.length - 1; i++) {
+      const diff = eigenValues[i] - eigenValues[i + 1];
+      if (diff > 0.005 || diff < -0.005) {
+        backgroundColors.push('rgba(75,192,192,0.4)');
+        borderColors.push('rgba(0,255,0,1)');
+        pointSize.push(3);
+        labelColors.push('rgba(255, 255, 255, 0.2)');
+      } else {
+        backgroundColors.push('rgb(0,255,0)');
+        borderColors.push('rgb(0,255,0)');
+        labelColors.push('green');
+        pointSize.push(6);
+      }
     }
+    backgroundColors.push('rgba(75,192,192,0.4)');
+    borderColors.push('rgba(75,192,192,1)');
   }
-  // For the last eigenvalue, just push the original color since it has no next value to compare
-  backgroundColors.push('rgba(75,192,192,0.4)');
-  borderColors.push('rgba(75,192,192,1)');
-}
 
-const dataForChart = {
-  labels: coor,
-  datasets: [
-    {
-      label: 'Eigenvalues',
-      data: eigenValues || [],
-      fill: false,
-      backgroundColor: backgroundColors,
-      borderColor: 'rgba(75,192,192,0.4)',
-      pointRadius: pointSize,          // Size of the points
-      // pointHoverRadius: 8,     // Size of the points when hovered
-      // pointBorderWidth: 2,     // Border width of the points
-    },
-  ],
-};
-
+  const dataForChart = {
+    labels: coor,
+    datasets: [
+      {
+        label: 'Erreur = ',
+        data: eigenValues || [],
+        fill: false,
+        backgroundColor: backgroundColors,
+        borderColor: 'rgba(75,192,192,0.4)',
+        pointRadius: pointSize
+      },
+    ],
+  };
 
   const optionsForChart = {
     responsive: true,
     plugins: {
       legend: {
-        display: false
-      }
+        display: false,
+      },
     },
     scales: {
       x: {
         grid: {
-          color: 'rgba(220, 220, 220, 0.1)' 
-        }
+          color: 'rgba(220, 220, 220, 0.1)',
+        },
+        ticks: {
+          color: labelColors,
+        },
       },
       y: {
         grid: {
-          color: 'rgba(220, 220, 220, 0.1)' 
-        }
-      }
-    }
+          color: 'rgba(220, 220, 220, 0.1)',
+        },
+      },
+    },
   };
 
   if (loading) {
@@ -149,12 +142,12 @@ const dataForChart = {
 
   return (
     <div>
-      <h1>XX<sup>t</sup></h1>
+      {!eigShowed && <h1>Matrice de covariance</h1>}
       {!eigShowed && <button type="button" onClick={eigenValue_calculator}>Calculer les valeurs propres</button>}
       {!eigShowed && (
         <table cellPadding="5">
           <tbody>
-            {resultMatrix.map((row, rowIndex) => (
+            {covMatrix.map((row, rowIndex) => (
               <tr key={rowIndex}>
                 {row.map((value, colIndex) => (
                   <td key={colIndex}>{value}</td>
@@ -168,10 +161,12 @@ const dataForChart = {
         <div>
           <Line data={dataForChart} options={optionsForChart} className="small-graph" />
           <div>
-            <h2>Erreurs (√Valeurs propres) :</h2>
             <ul>
               {eigenValues.map((value, index) => (
-                <li key={index}>{value}</li>
+                <li key={index}>
+                  <span>[{index}] </span>
+                  {value}
+                </li>
               ))}
             </ul>
           </div>
