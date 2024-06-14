@@ -38,3 +38,4 @@ export const covarianceMatrix = matrix => {
   }
   return covMatrix;
 };
+

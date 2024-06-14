@@ -5,7 +5,7 @@ import { eigs } from 'mathjs';
 import '../App.css';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, LineElement, CategoryScale, LinearScale, PointElement, Title, Tooltip, Legend } from 'chart.js';
-import { transposeMatrix, meanMatrix, covarianceMatrix } from './matrixOperation'; // Importer les fonctions
+import {covarianceMatrix } from './matrixOperation';
 
 ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement, Title, Tooltip, Legend);
 
@@ -13,11 +13,10 @@ const Covariance = ({ data }) => {
   const [loading, setLoading] = useState(true);
   const [sequences, setSequences] = useState([]);
   const [covMatrix, setCovMatrix] = useState([]);
-  const [eigenValues, setEigenValues] = useState(null);
-  const [eigShowed, setEigShowed] = useState(false);
-  const [errorData, setErrorData] = useState([]);
+  const [errorsData, setErrorsData] = useState(null);
+  const [errorShowed, setErrorShowed] = useState(false);
 
-  const m = 15; // Dimension d'incorporation
+  const m = 9; // Dimension d'incorporation
   const t = 1; // Délai de mesure
 
   const buildSequence = (index) => {
@@ -56,27 +55,28 @@ const Covariance = ({ data }) => {
     calculateCovariance();
   }, [data]);
 
-  const eigenValue_calculator = () => {
-    setEigShowed(true);
+  const errors_calculator = () => {
+    setErrorShowed(true);
     if (covMatrix) {
       const { values } = eigs(covMatrix);
       const roundedValues = values
-      .map(e => Number(e.toFixed(2)))
+      .map(e => e**0.5)
+      .map(e => Number(e.toFixed(5)))
       .sort((a, b) => b - a);
-      setEigenValues(roundedValues);
+      setErrorsData(roundedValues);
     }
     console.log("eig cal");
   };
 
-  const coor = eigenValues ? eigenValues.map((_, index) => index) : [];
+  const coor = errorsData ? errorsData.map((_, index) => index) : [];
   const backgroundColors = [];
   const borderColors = [];
   const labelColors = [];
   const pointSize = [];
 
-  if (eigenValues) {
-    for (let i = 0; i < eigenValues.length - 1; i++) {
-      const diff = eigenValues[i] - eigenValues[i + 1];
+  if (errorsData) {
+    for (let i = 0; i < errorsData.length - 1; i++) {
+      const diff = errorsData[i] - errorsData[i + 1];
       if (diff > 0.005 || diff < -0.005) {
         backgroundColors.push('rgba(75,192,192,0.4)');
         borderColors.push('rgba(0,255,0,1)');
@@ -98,7 +98,7 @@ const Covariance = ({ data }) => {
     datasets: [
       {
         label: 'Erreur = ',
-        data: eigenValues || [],
+        data: errorsData || [],
         fill: false,
         backgroundColor: backgroundColors,
         borderColor: 'rgba(75,192,192,0.4)',
@@ -142,9 +142,9 @@ const Covariance = ({ data }) => {
 
   return (
     <div>
-      {!eigShowed && <h1>Matrice de covariance</h1>}
-      {!eigShowed && <button type="button" onClick={eigenValue_calculator}>Calculer les valeurs propres</button>}
-      {!eigShowed && (
+      {!errorShowed && <h1>Matrice de covariance</h1>}
+      {!errorShowed && <button type="button" onClick={errors_calculator}>Calculer les erreurs</button>}
+      {!errorShowed && (
         <table cellPadding="5">
           <tbody>
             {covMatrix.map((row, rowIndex) => (
@@ -157,12 +157,12 @@ const Covariance = ({ data }) => {
           </tbody>
         </table>
       )}
-      {eigenValues && eigShowed && (
+      {errorsData && errorShowed && (
         <div>
-          <Line data={dataForChart} options={optionsForChart} className="small-graph" />
+          <Line data={dataForChart} options={optionsForChart} className='chartjs' />
           <div>
             <ul>
-              {eigenValues.map((value, index) => (
+              {errorsData.map((value, index) => (
                 <li key={index}>
                   <span>[{index}] </span>
                   {value}

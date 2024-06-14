@@ -21,7 +21,7 @@ function FiftyValues() {
             { !showGraph && data.map(([xVal, yVal], index) => {
                 if (index === 0) {
                     return (
-                        <div className='list' >
+                        <div className='list' key={index} >
                             <div>Pour n = 0</div>
                             <div>
                                 x(0) = 0

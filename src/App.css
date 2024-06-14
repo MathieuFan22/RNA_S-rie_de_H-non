@@ -5,29 +5,19 @@
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
+
 .app-container {
-  text-align: center;
+  display: flex;
+  flex-direction: row;
   position: relative;
+  text-align: center;
 }
 
 .sidebar {
   position: fixed;
-  margin-left: 7.5vw;
-  width: 13vw;
+  margin-left: 125px;
+  width: 250px;
   height: 100vh;
-  padding: 25px;
   top: 0;
   left: 0;
   transform: translateX(-50%);
@@ -37,20 +27,99 @@
     /* box-shadow: 0px 5px 25px rgba(0, 0, 0, .7); */
   display: flex;
   flex-direction: column;
+
+}
+.sidebar.expanded {
+  width: 250px;
+}
+
+.dropdown {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  background-color: rgba(185, 185, 185, 0.082);
+}
+
+.dropdown-title {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dropdown-content {
+  margin: 15px;
+  display: block; /* Set to block to enable transition effects */
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+
+}
+
+.dropdown-content.visible {
+  max-height: 500px; /* Adjust to the expected maximum height */
+  opacity: 1;
+}
+
+.sidebar .dropdown {
+  cursor: pointer;
+  user-select: none;
+}
+
+.dropdown-content button {
+  display: block;
+  width: 100%;
+  margin: 10px 0;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
 }
 
 .sidebar button {
-  margin: 10px 10px;
+  display: block;
+  width: 100%;
+  margin: 10px 0;
   padding: 10px 20px;
   font-size: 16px;
   cursor: pointer;
 }
 
 .content {
-  padding-left: 0vw;
-  width: 80vw;
-  user-select: none;
+  margin-left: 250px;
+  padding: 20px;
+  transition: margin-left 0.5s ease, width 0.5s ease;
 }
+
+/* @media (max-width: 768px) {
+  .sidebar {
+    width: 200px;
+  }
+
+  .sidebar.expanded {
+    width: 200px;
+  }
+
+  .content {
+    margin-left: 200px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar {
+    width: 150px;
+  }
+
+  .sidebar.expanded {
+    width: 150px;
+  }
+
+  .content {
+    margin-left: 150px;
+    width: calc(100% - 150px);
+  }
+} */
 
 .chart-container {
   display: flex;
@@ -60,8 +129,9 @@
 }
 
 .chartjs {
+  /* --aspect-ratio: 3; */
   width: 800px;
-  height: 600px;
+  height: 200px;
 }
 .serie{
   text-align: left;
