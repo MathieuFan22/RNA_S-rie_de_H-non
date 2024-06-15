@@ -16,10 +16,12 @@ function WeightUpdate({ data }) {
         desiredOutputs.push([data[i + 5]]);
     }
 
+    // Function to generate random weights
     function getRandomWeight(min, max) {
         return Math.random() * (max - min) + min;
     }
 
+    // Initialize weights for a given layer configuration
     function initializeWeights(layers) {
         const weights = [];
         for (let i = 0; i < layers.length - 1; i++) {
@@ -36,13 +38,25 @@ function WeightUpdate({ data }) {
         return weights;
     }
 
+    // Store weights for different hidden unit configurations
+    const allWeightsPerUnits = [];
+    for (let hiddenUnits = 1; hiddenUnits <= 5; hiddenUnits++) {
+        const layers = [5, hiddenUnits, 1];
+        allWeightsPerUnits.push(initializeWeights(layers));
+    }
+
+    // Sigmoid activation function
     const sigmoid = (x) => 1 / (1 + Math.exp(-x));
+
+    // Derivative of the sigmoid function
     const sigmoidDerivative = (x) => Math.exp(-x) / ((1 + Math.exp(-x)) ** 2);
 
+    // Calculate the weighted sum of inputs
     const calculateActivation = (weights, inputs) => {
         return weights.reduce((sum, weight, index) => sum + weight * inputs[index], 0);
     };
 
+    // Perform forward propagation through the neural network
     const forwardPropagation = (w, V, h) => {
         for (let m = 0; m < w.length; m++) {
             for (let i = 0; i < w[m][0].length; i++) {
@@ -54,6 +68,7 @@ function WeightUpdate({ data }) {
         }
     };
 
+    // Calculate delta for the output layer
     const calculateOutputLayerDelta = (w, V, h, desiredOutput) => {
         const delta = [];
         for (let i = 0; i < w[1][0].length; i++) {
@@ -62,6 +77,7 @@ function WeightUpdate({ data }) {
         return delta;
     };
 
+    // Calculate delta for the hidden layer
     const calculateHiddenLayerDelta = (w, V, h, outputDelta) => {
         const delta = [];
         let tmp = [];
@@ -73,6 +89,7 @@ function WeightUpdate({ data }) {
         return delta;
     };
 
+    // Update weights based on delta and learning rate
     const updateWeights = (w, V, delta) => {
         for (let m = 0; m < w.length; m++) {
             for (let i = 0; i < w[m].length; i++) {
@@ -83,6 +100,7 @@ function WeightUpdate({ data }) {
         }
     };
 
+    // Train the neural network with a given prototype and desired output
     const trainWithPrototype = (w, prototype, desiredOutput) => {
         const V = [[...prototype], [], []];
         const h = [[], [], []];
@@ -97,6 +115,7 @@ function WeightUpdate({ data }) {
         return V[2]; // Return the output of the network
     };
 
+    // Calculate Normalized Mean Squared Error (NMSE)
     const calculateNMSE = (desired, predicted) => {
         const mean = desired.reduce((sum, val) => sum + val, 0) / desired.length;
         const mse = desired.reduce((sum, val, idx) => sum + Math.pow(val - predicted[idx], 2), 0) / desired.length;
@@ -104,13 +123,12 @@ function WeightUpdate({ data }) {
         return mse / variance;
     };
 
+    // Train the network for all configurations and store NMSE values
     const train = () => {
         const nmseResults = [];
 
         for (let hiddenUnits = 1; hiddenUnits <= 5; hiddenUnits++) {
-            const layers = [5, hiddenUnits, 1];
-            let w = initializeWeights(layers);
-
+            const w = allWeightsPerUnits[hiddenUnits - 1]; // Retrieve pre-initialized weights
             const networkOutputs = [];
 
             for (let i = 0; i < prototypes.length; i++) {
@@ -132,12 +150,14 @@ function WeightUpdate({ data }) {
         setShowChart(true);
     };
 
+    // Log results to console
     const logResults = (networkOutputs) => {
         for (let i = 0; i < networkOutputs.length; i++) {
             console.log(`x${i + 6} = ${networkOutputs[i]}`);
         }
     };
 
+    // Data and options for Chart.js Line chart
     const dataForChart = {
         labels: [1, 2, 3, 4, 5],
         datasets: [
@@ -166,10 +186,10 @@ function WeightUpdate({ data }) {
             },
         },
     };
-
+    
     return (
         <div className='fifty'>
-            <button type="button" onClick={train}>Train and Show NMSE Graph</button>
+            <button type="button" onClick={train}>Calculer les NMSE</button>
             {showChart && <Line data={dataForChart} options={options} />}
         </div>
     );

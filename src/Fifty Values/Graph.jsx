@@ -22,8 +22,6 @@ ChartJS.register(
 
 const Graph= () => {
   
-// const dataPoints = calculateXY(0,0,500)
-
 const dataPoints = calculateXY(0, 0, 500)
 const data = {
   labels: dataPoints.map(point => point[0].toFixed(2)),
@@ -79,9 +77,7 @@ const options= {
 };
 
   return (
-    <div>
       <Line data={data} options={options} className='chartjs' />
-    </div>
   );
 };
 
