@@ -71,7 +71,7 @@ const App = () => {
         {currentPage === 0 && <FiftyValues />}
         {currentPage === 1 && <HenonSequences data={data} />}
         {currentPage === 2 && <Covariance data={data} />}
-        {currentPage === 3 && <WeightUpdate data={data} />}
+        {currentPage === 3 && <WeightUpdate data={data} p={4} />}
         {currentPage === 4 && <NeuralNetworkPredictor data={data} />}
         {/* {currentPage === 4 && <HenonMap a={1.4} b={0.3} x0={0} y0={0} n={500} />} */}
       </div>

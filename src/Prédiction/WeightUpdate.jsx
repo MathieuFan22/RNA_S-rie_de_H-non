@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Line } from 'react-chartjs-2';
 import '../App.css';
+import { index } from 'mathjs';
 
-function WeightUpdate({ data }) {
+function WeightUpdate({ data: data, p:p }) {
     const [nmseValues, setNmseValues] = useState([]);
     const [showChart, setShowChart] = useState(false);
     const step = 0.1;
@@ -11,9 +12,9 @@ function WeightUpdate({ data }) {
     const prototypes = [];
     const desiredOutputs = [];
 
-    for (let i = 0; i < data.length - 5; i++) {
-        prototypes.push(data.slice(i, i + 5));
-        desiredOutputs.push([data[i + 5]]);
+    for (let i = 0; i < data.length - p; i++) {
+        prototypes.push(data.slice(i, i + p));
+        desiredOutputs.push([data[i + p]]);
     }
 
     // Function to generate random weights
@@ -40,8 +41,8 @@ function WeightUpdate({ data }) {
 
     // Store weights for different hidden unit configurations
     const allWeightsPerUnits = [];
-    for (let hiddenUnits = 1; hiddenUnits <= 5; hiddenUnits++) {
-        const layers = [5, hiddenUnits, 1];
+    for (let hiddenUnits = 1; hiddenUnits <= p; hiddenUnits++) {
+        const layers = [p, hiddenUnits, 1];
         allWeightsPerUnits.push(initializeWeights(layers));
     }
 
@@ -127,7 +128,7 @@ function WeightUpdate({ data }) {
     const train = () => {
         const nmseResults = [];
 
-        for (let hiddenUnits = 1; hiddenUnits <= 5; hiddenUnits++) {
+        for (let hiddenUnits = 1; hiddenUnits <= p; hiddenUnits++) {
             const w = allWeightsPerUnits[hiddenUnits - 1]; // Retrieve pre-initialized weights
             const networkOutputs = [];
 
@@ -159,7 +160,7 @@ function WeightUpdate({ data }) {
 
     // Data and options for Chart.js Line chart
     const dataForChart = {
-        labels: [1, 2, 3, 4, 5],
+        labels: Array.from({length: p}, (_, index)=> index + 1),
         datasets: [
             {
                 label: 'NMSE',
@@ -180,7 +181,7 @@ function WeightUpdate({ data }) {
             x: {
                 ticks: {
                     color: nmseValues.map((value) => 
-                        value === Math.min(...nmseValues) ? 'red' : 'black'
+                        value === Math.min(...nmseValues) ? 'red' : 'rgba(240,240,240, 0.3)'
                     ),
                 },
             },
