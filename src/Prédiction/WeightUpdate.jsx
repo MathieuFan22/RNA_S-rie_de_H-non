@@ -149,6 +149,9 @@ function WeightUpdate({ data: data, p:p }) {
 
         setNmseValues(nmseResults);
         setShowChart(true);
+        setTimeout(() => {
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })
+        }, 100);
     };
 
     // Log results to console
@@ -189,9 +192,9 @@ function WeightUpdate({ data: data, p:p }) {
     };
     
     return (
-        <div className='fifty'>
+        <div className='centred'>
             <button type="button" onClick={train}>Calculer les NMSE</button>
-            {showChart && <Line data={dataForChart} options={options} />}
+            {showChart && <Line data={dataForChart} options={options} className='chartjs'/>}
         </div>
     );
 }

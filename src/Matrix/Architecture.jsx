@@ -1,20 +1,22 @@
 // Covariance.js
-
 import React, { useState, useEffect } from 'react';
 import { eigs } from 'mathjs';
 import '../App.css';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, LineElement, CategoryScale, LinearScale, PointElement, Title, Tooltip, Legend } from 'chart.js';
-import {covarianceMatrix } from './matrixOperation';
+import { covarianceMatrix } from './matrixOperation';
+import WeightUpdate from '../Prédiction/WeightUpdate';
 
 ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement, Title, Tooltip, Legend);
 
-const Covariance = ({ data }) => {
+const Architecture = ({ data }) => {
   const [loading, setLoading] = useState(true);
   const [sequences, setSequences] = useState([]);
   const [covMatrix, setCovMatrix] = useState([]);
   const [errorsData, setErrorsData] = useState(null);
   const [errorShowed, setErrorShowed] = useState(false);
+  const [significantDiffIndex, setSignificantDiffIndex] = useState(null);
+  const [showHiddenUnits, setshowHiddenUnits] = useState(false);
 
   const m = 9; // Dimension d'incorporation
   const t = 1; // Délai de mesure
@@ -55,24 +57,32 @@ const Covariance = ({ data }) => {
     calculateCovariance();
   }, [data]);
 
-  const errors_calculator = () => {
-    setErrorShowed(true);
-    if (covMatrix) {
-      const { values } = eigs(covMatrix);
-      const roundedValues = values
-      .map(e => e**0.5)
-      .map(e => Number(e.toFixed(5)))
-      .sort((a, b) => b - a);
-      setErrorsData(roundedValues);
-    }
-    console.log("eig cal");
-  };
-
   const coor = errorsData ? errorsData.map((_, index) => index) : [];
   const backgroundColors = [];
   const borderColors = [];
   const labelColors = [];
   const pointSize = [];
+
+  const errors_calculator = () => {
+    setErrorShowed(true);
+    if (covMatrix) {
+      const { values } = eigs(covMatrix);
+      const roundedValues = values
+        .map(e => e ** 0.5)
+        .map(e => Number(e.toFixed(5)))
+        .sort((a, b) => b - a);
+      setErrorsData(roundedValues);
+
+      for (let i = 0; i < roundedValues.length - 1; i++) {
+        const diff = roundedValues[i] - roundedValues[i + 1];
+        if (diff < 0.005 && diff > -0.005) {
+          console.log(diff, i);
+          setSignificantDiffIndex(i);
+          break;
+        }
+      }
+    }
+  };
 
   if (errorsData) {
     for (let i = 0; i < errorsData.length - 1; i++) {
@@ -131,6 +141,14 @@ const Covariance = ({ data }) => {
     },
   };
 
+  const showHiddenUnitsGraph = () => {
+    setshowHiddenUnits(true)
+    setTimeout(() => {
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })
+    }, 100);
+  }
+
+
   if (loading) {
     return (
       <div>
@@ -143,7 +161,7 @@ const Covariance = ({ data }) => {
   return (
     <div>
       {!errorShowed && <h1>Matrice de covariance</h1>}
-      {!errorShowed && <button type="button" onClick={errors_calculator}>Calculer les erreurs</button>}
+      {!errorShowed && <button type="button" onClick={errors_calculator}>Calculer les erreurs d'approximation moyenne</button>}
       {!errorShowed && (
         <table cellPadding="5">
           <tbody>
@@ -159,21 +177,33 @@ const Covariance = ({ data }) => {
       )}
       {errorsData && errorShowed && (
         <div>
+          <h2>Unités de couche d'entrée</h2>
           <Line data={dataForChart} options={optionsForChart} className='chartjs' />
-          <div>
-            <ul>
-              {errorsData.map((value, index) => (
-                <li key={index}>
-                  <span>[{index}] </span>
-                  {value}
-                </li>
-              ))}
-            </ul>
+          <h4>Le Nombre d'unités de la couche d'entrée est {significantDiffIndex} </h4>
+          <div className='centred'>
+            <button type="button" onClick={showHiddenUnitsGraph}>Nombre d'unités cachées</button>
           </div>
+          {showHiddenUnits &&
+            <div className="centred">
+              <div className="line"></div>
+              <h2>Unités de couche d'entrée</h2>
+              <WeightUpdate data={data} p={significantDiffIndex} />
+            </div>
+          }
         </div>
       )}
     </div>
   );
 };
 
-export default Covariance;
+export default Architecture;
+
+
+{/* <ul>
+  {errorsData.map((value, index) => (
+    <li key={index}>
+      <span>[{index}] </span>
+      {value}
+    </li>
+  ))}
+</ul> */}

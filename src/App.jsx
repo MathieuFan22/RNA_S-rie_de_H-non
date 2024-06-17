@@ -5,13 +5,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons';
 import HenonSequences from './HenonSequence';
 import calculateXY from './Fifty Values/get500Values';
-import Covariance from './Matrix/Covariance';
+import Architecture from './Matrix/Architecture';
 import HenonMap from './HenonMap';
 import WeightUpdate from './Prédiction/WeightUpdate';
 import NeuralNetworkPredictor from './NeuralNetworkPredictor';
+import Apprentissage from './Prédiction/Apprentissage';
 
 const App = () => {
-  const [currentPage, setCurrentPage] = useState(3);
+  const [currentPage, setCurrentPage] = useState(2);
   const [dropdowns, setDropdowns] = useState({
     architecture: false,
     prediction: false,
@@ -50,8 +51,7 @@ const App = () => {
           <h4>Architecture</h4> <FontAwesomeIcon icon={dropdowns.architecture ? faCaretUp : faCaretDown} />
         </div>
         <div className={`dropdown-content ${dropdowns.architecture ? 'visible' : ''}`}>
-          <button type="button" onClick={() => toPage(2)}>Unité de la couche d'entrée</button>
-          <button type="button" onClick={() => toPage(3)}>Unité de la couche de sortie</button>
+          <button type="button" onClick={() => toPage(2)}>Architecture</button>
         </div>
        
         
@@ -61,7 +61,7 @@ const App = () => {
           <h4>Prédiction</h4> <FontAwesomeIcon icon={dropdowns.prediction ? faCaretUp : faCaretDown} />
         </div>
         <div className={`dropdown-content ${dropdowns.prediction ? 'visible' : ''}`}>
-          <button type="button" onClick={() => toPage(4)}>Erreur</button>
+          <button type="button" onClick={() => toPage(4)}>Apprentissage</button>
         </div>
         
 
@@ -70,9 +70,8 @@ const App = () => {
       <div className='content'>
         {currentPage === 0 && <FiftyValues />}
         {currentPage === 1 && <HenonSequences data={data} />}
-        {currentPage === 2 && <Covariance data={data} />}
-        {currentPage === 3 && <WeightUpdate data={data} p={4} />}
-        {currentPage === 4 && <NeuralNetworkPredictor data={data} />}
+        {currentPage === 2 && <Architecture data={data} />}
+        {currentPage === 4 && <Apprentissage data={data} p={5}/>}
         {/* {currentPage === 4 && <HenonMap a={1.4} b={0.3} x0={0} y0={0} n={500} />} */}
       </div>
     </div>
