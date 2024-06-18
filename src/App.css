@@ -180,6 +180,7 @@ li {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+  margin-top: 30px;
 }
 .list{
   flex: 1 0 20%; 
@@ -200,6 +201,14 @@ li {
   display: flex;
   flex-direction: column;
   gap: 10px; /* Adjust the gap between buttons if needed */
+}
+.graph-button {
+  position: fixed;
+  top: 20px;
+  right: 5%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 /*Spinner*/

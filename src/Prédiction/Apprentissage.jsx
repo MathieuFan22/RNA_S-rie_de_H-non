@@ -113,7 +113,7 @@ function Apprentissage({ data: data, p: p }) {
         const hiddenDelta = calculateHiddenLayerDelta(w, V, h, outputDelta);
 
         updateWeights(w, V, [hiddenDelta, outputDelta]);
-
+        // console.log(V[2]);
         return V[2]; // Return the output of the network
     };
 

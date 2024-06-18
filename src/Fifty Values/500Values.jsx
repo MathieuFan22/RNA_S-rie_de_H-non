@@ -17,7 +17,7 @@ function FiftyValues() {
     const data = calculateXY(0, 0, 500)
     return (
         <div className='fifty'>
-            <button onClick={toGraph}>{buttonLabel}</button>
+            <button onClick={toGraph} className='graph-button'>{buttonLabel}</button>
             { !showGraph && data.map(([xVal, yVal], index) => {
                 if (index === 0) {
                     return (
