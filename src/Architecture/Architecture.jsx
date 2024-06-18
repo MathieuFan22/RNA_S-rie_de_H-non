@@ -5,7 +5,7 @@ import '../App.css';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, LineElement, CategoryScale, LinearScale, PointElement, Title, Tooltip, Legend } from 'chart.js';
 import { covarianceMatrix } from './matrixOperation';
-import WeightUpdate from '../Prédiction/WeightUpdate';
+import HiddenLayerUnits from './HiddenLayerUnits';
 
 ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement, Title, Tooltip, Legend);
 
@@ -15,7 +15,7 @@ const Architecture = ({ data }) => {
   const [covMatrix, setCovMatrix] = useState([]);
   const [errorsData, setErrorsData] = useState(null);
   const [errorShowed, setErrorShowed] = useState(false);
-  const [significantDiffIndex, setSignificantDiffIndex] = useState(null);
+  const [inputUnits, setInputUnits] = useState(null);
   const [showHiddenUnits, setshowHiddenUnits] = useState(false);
 
   const m = 9; // Dimension d'incorporation
@@ -77,7 +77,7 @@ const Architecture = ({ data }) => {
         const diff = roundedValues[i] - roundedValues[i + 1];
         if (diff < 0.005 && diff > -0.005) {
           console.log(diff, i);
-          setSignificantDiffIndex(i);
+          setInputUnits(i);
           break;
         }
       }
@@ -179,15 +179,15 @@ const Architecture = ({ data }) => {
         <div>
           <h2>Unités de couche d'entrée</h2>
           <Line data={dataForChart} options={optionsForChart} className='chartjs' />
-          <h4>Le Nombre d'unités de la couche d'entrée est {significantDiffIndex} </h4>
+          <h4>Le Nombre d'unités de la couche d'entrée est {inputUnits} </h4>
           <div className='centred'>
             <button type="button" onClick={showHiddenUnitsGraph}>Nombre d'unités cachées</button>
           </div>
           {showHiddenUnits &&
             <div className="centred">
               <div className="line"></div>
-              <h2>Unités de couche d'entrée</h2>
-              <WeightUpdate data={data} p={significantDiffIndex} />
+              <h2>Unités de la couche cachée</h2>
+              <HiddenLayerUnits data={data} p={inputUnits} />
             </div>
           }
         </div>

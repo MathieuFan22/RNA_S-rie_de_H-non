@@ -5,11 +5,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons';
 import HenonSequences from './HenonSequence';
 import calculateXY from './Fifty Values/get500Values';
-import Architecture from './Matrix/Architecture';
-import HenonMap from './HenonMap';
-import WeightUpdate from './Prédiction/WeightUpdate';
-import NeuralNetworkPredictor from './NeuralNetworkPredictor';
 import Apprentissage from './Prédiction/Apprentissage';
+import Architecture from './Architecture/Architecture';
 
 const App = () => {
   const [currentPage, setCurrentPage] = useState(2);
@@ -72,7 +69,6 @@ const App = () => {
         {currentPage === 1 && <HenonSequences data={data} />}
         {currentPage === 2 && <Architecture data={data} />}
         {currentPage === 4 && <Apprentissage data={data} p={5}/>}
-        {/* {currentPage === 4 && <HenonMap a={1.4} b={0.3} x0={0} y0={0} n={500} />} */}
       </div>
     </div>
   );

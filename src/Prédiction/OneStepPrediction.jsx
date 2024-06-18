@@ -1,11 +1,13 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 import { Line } from 'react-chartjs-2';
 import '../App.css';
-import { index } from 'mathjs';
+import { index } from 'mathjs'; 
 
-function WeightUpdate({ data: data, p:p }) {
+function OneStepPrediction({ data: data, w: w }) {
     const [nmseValues, setNmseValues] = useState([]);
     const [showChart, setShowChart] = useState(false);
+    const [lastWeight, setlastWeight] = useState([]);
     const step = 0.1;
 
     // Prepare prototypes and desired outputs from data
@@ -17,28 +19,8 @@ function WeightUpdate({ data: data, p:p }) {
         desiredOutputs.push([data[i + p]]);
     }
 
-    // Function to generate random weights
-    function getRandomWeight(min, max) {
-        return Math.random() * (max - min) + min;
-    }
 
-    // Initialize weights for a given layer configuration
-    function initializeWeights(layers) {
-        const weights = [];
-        for (let i = 0; i < layers.length - 1; i++) {
-            const layerWeights = [];
-            for (let j = 0; j < layers[i]; j++) {
-                const neuronWeights = [];
-                for (let k = 0; k < layers[i + 1]; k++) {
-                    neuronWeights.push(Number(getRandomWeight(0.1, 0.3).toFixed(2)));
-                }
-                layerWeights.push(neuronWeights);
-            }
-            weights.push(layerWeights);
-        }
-        return weights;
-    }
-
+   
     // Store weights for different hidden unit configurations
     const allWeightsPerUnits = [];
     for (let hiddenUnits = 1; hiddenUnits <= p; hiddenUnits++) {
@@ -69,14 +51,6 @@ function WeightUpdate({ data: data, p:p }) {
         }
     };
 
-    // Calculate delta for the output layer
-    const calculateOutputLayerDelta = (w, V, h, desiredOutput) => {
-        const delta = [];
-        for (let i = 0; i < w[1][0].length; i++) {
-            delta.push(sigmoidDerivative(h[1][i]) * (desiredOutput[i] - V[2][i]));
-        }
-        return delta;
-    };
 
     // Calculate delta for the hidden layer
     const calculateHiddenLayerDelta = (w, V, h, outputDelta) => {
@@ -112,7 +86,7 @@ function WeightUpdate({ data: data, p:p }) {
         const hiddenDelta = calculateHiddenLayerDelta(w, V, h, outputDelta);
 
         updateWeights(w, V, [hiddenDelta, outputDelta]);
-
+        // console.log(V[2]);
         return V[2]; // Return the output of the network
     };
 
@@ -128,10 +102,8 @@ function WeightUpdate({ data: data, p:p }) {
     const train = () => {
         const nmseResults = [];
 
-        for (let hiddenUnits = 1; hiddenUnits <= p; hiddenUnits++) {
-            const w = allWeightsPerUnits[hiddenUnits - 1]; // Retrieve pre-initialized weights
+        
             const networkOutputs = [];
-
             for (let i = 0; i < prototypes.length; i++) {
                 const networkOutput = trainWithPrototype(w, prototypes[i], desiredOutputs[i]);
                 networkOutputs.push(networkOutput[0]);
@@ -141,62 +113,49 @@ function WeightUpdate({ data: data, p:p }) {
             const nmse = calculateNMSE(desiredValues, networkOutputs);
 
             nmseResults.push(nmse);
-            console.log(`Hidden Units: ${hiddenUnits}`);
+            console.log(`Epoque : ${epoch}`);
             console.log('Updated weights:', w);
             console.log('NMSE:', nmse);
             console.log('\n\n');
-        }
+       
 
         setNmseValues(nmseResults);
         setShowChart(true);
-        setTimeout(() => {
-            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })
-        }, 100);
+        setlastWeight(w)
     };
 
-    // Log results to console
-    const logResults = (networkOutputs) => {
-        for (let i = 0; i < networkOutputs.length; i++) {
-            console.log(`x${i + 6} = ${networkOutputs[i]}`);
-        }
+    const showLastWeight = () => {
+        console.log(lastWeight);
     };
 
     // Data and options for Chart.js Line chart
     const dataForChart = {
-        labels: Array.from({length: p}, (_, index)=> index + 1),
+        labels: Array.from({ length: 100 }, (_, index) => index + 1),
         datasets: [
             {
                 label: 'NMSE',
                 data: nmseValues,
                 fill: false,
-                backgroundColor: nmseValues.map((value, index) =>
-                    value === Math.min(...nmseValues) ? 'red' : 'rgba(75,192,192,0.4)'
-                ),
+                backgroundColor: 'rgba(75,192,192,0.4)',
                 borderColor: 'rgba(75,192,192,1)',
-                pointBackgroundColor: nmseValues.map((value, index) =>
-                    value === Math.min(...nmseValues) ? 'red' : 'rgba(75,192,192,1)'
-                ),
+                pointBackgroundColor: 'rgba(75,192,192,1)',
             },
         ],
     };
-    const options = {
-        scales: {
-            x: {
-                ticks: {
-                    color: nmseValues.map((value) => 
-                        value === Math.min(...nmseValues) ? 'red' : 'rgba(240,240,240, 0.3)'
-                    ),
-                },
-            },
-        },
-    };
-    
+
+
     return (
-        <div className='centred'>
-            <button type="button" onClick={train}>Calculer les NMSE</button>
-            {showChart && <Line data={dataForChart} options={options} className='chartjs'/>}
+        <div className='fifty'>
+            <button type="button" onClick={train}>Afficher le graphe d'apprentissage</button>
+            {showChart && 
+                <div className="sdfsdf">
+                    <Line data={dataForChart} />
+                    
+                </div>
+
+            }
         </div>
     );
 }
 
-export default WeightUpdate;
+export default OneStepPrediction;

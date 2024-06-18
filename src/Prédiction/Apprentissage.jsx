@@ -3,10 +3,12 @@ import React, { useState } from 'react';
 import { Line } from 'react-chartjs-2';
 import '../App.css';
 import { index } from 'mathjs';
+import OneStepPrediction from './OneStepPrediction';
 
 function Apprentissage({ data: data, p: p }) {
     const [nmseValues, setNmseValues] = useState([]);
     const [showChart, setShowChart] = useState(false);
+    const [lastWeight, setlastWeight] = useState([]);
     const step = 0.1;
 
     // Prepare prototypes and desired outputs from data
@@ -149,9 +151,12 @@ function Apprentissage({ data: data, p: p }) {
 
         setNmseValues(nmseResults);
         setShowChart(true);
+        setlastWeight(w)
     };
 
-  
+    const showLastWeight = () => {
+        console.log(lastWeight);
+    };
 
     // Data and options for Chart.js Line chart
     const dataForChart = {
@@ -172,7 +177,14 @@ function Apprentissage({ data: data, p: p }) {
     return (
         <div className='fifty'>
             <button type="button" onClick={train}>Afficher le graphe d'apprentissage</button>
-            {showChart && <Line data={dataForChart} />}
+            {showChart && 
+                <div className="sdfsdf">
+                    <Line data={dataForChart} />
+                    {/* <OneStepPrediction data={data} w={w}/> */}
+
+                </div>
+
+            }
         </div>
     );
 }
