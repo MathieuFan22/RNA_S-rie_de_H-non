@@ -68,7 +68,7 @@ const App = () => {
         {currentPage === 0 && <FiftyValues />}
         {currentPage === 1 && <HenonSequences data={data} />}
         {currentPage === 2 && <Architecture data={data} />}
-        {currentPage === 4 && <Apprentissage data={data} p={5}/>}
+        {currentPage === 4 && <Apprentissage data={data} inputUnit={5}/>}
       </div>
     </div>
   );

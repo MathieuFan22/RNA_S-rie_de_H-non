@@ -4,20 +4,29 @@ import { Line } from 'react-chartjs-2';
 import '../App.css';
 import { index } from 'mathjs';
 import OneStepPrediction from './OneStepPrediction';
+import OneStepAhead from './onsre';
+import ThreeStepsAhead from './ThreeStepsPrediction';
+import TenStepsAhead from './TenStepsPrediction';
+import TwentyStepsAhead from './twentyStepsAhead';
 
-function Apprentissage({ data: data, p: p }) {
+function Apprentissage({ data: data, inputUnit: inputUnit, hiddenUnit: hiddenUnit }) {
     const [nmseValues, setNmseValues] = useState([]);
     const [showChart, setShowChart] = useState(false);
-    const [lastWeight, setlastWeight] = useState([]);
-    const step = 0.1;
+    const [hideButton, setHideButton] = useState(false);
+    const [lastWeight, setLastWeight] = useState([]);
+    const [oneStepPrediction, setOneStepPrediction] = useState(false);
+    const [threeStepPrediction, setThreeStepPrediction] = useState(false);
+    const [tenStepPrediction, setTenStepPrediction] = useState(false);
+    const [twentyStepPrediction, setTwentyStepPrediction] = useState(false);
+    const step = 0.2;
 
     // Prepare prototypes and desired outputs from data
     const prototypes = [];
     const desiredOutputs = [];
 
-    for (let i = 0; i < data.length - p; i++) {
-        prototypes.push(data.slice(i, i + p));
-        desiredOutputs.push([data[i + p]]);
+    for (let i = 0; i < data.length - inputUnit; i++) {
+        prototypes.push(data.slice(i, i + inputUnit));
+        desiredOutputs.push([data[i + inputUnit]]);
     }
 
     // Function to generate random weights
@@ -25,7 +34,6 @@ function Apprentissage({ data: data, p: p }) {
         return Math.random() * (max - min) + min;
     }
 
-    // Initialize weights for a given layer configuration
     function initializeWeights(layers) {
         const weights = [];
         for (let i = 0; i < layers.length - 1; i++) {
@@ -42,18 +50,14 @@ function Apprentissage({ data: data, p: p }) {
         return weights;
     }
 
-    // Store weights for different hidden unit configurations
-    const allWeightsPerUnits = [];
-    for (let hiddenUnits = 1; hiddenUnits <= p; hiddenUnits++) {
-        const layers = [p, hiddenUnits, 1];
-        allWeightsPerUnits.push(initializeWeights(layers));
-    }
+    const layers = [inputUnit, 1, 1];
+    const w = initializeWeights(layers);
 
     // Sigmoid activation function
-    const sigmoid = (x) => 1 / (1 + Math.exp(-x));
+    const sigmoid = (x) => (Math.exp(x) - Math.exp(-x)) / (Math.exp(x) + Math.exp(-x));
 
     // Derivative of the sigmoid function
-    const sigmoidDerivative = (x) => Math.exp(-x) / ((1 + Math.exp(-x)) ** 2);
+    const sigmoidDerivative = (x) => 1 - Math.pow(sigmoid(x), 2)
 
     // Calculate the weighted sum of inputs
     const calculateActivation = (weights, inputs) => {
@@ -130,9 +134,8 @@ function Apprentissage({ data: data, p: p }) {
     // Train the network for all configurations and store NMSE values
     const train = () => {
         const nmseResults = [];
-        let w = allWeightsPerUnits[p - 1]; // Retrieve pre-initialized weights
 
-        for (let epoch = 1; epoch <= 100; epoch++) {
+        for (let epoch = 1; epoch <= 40; epoch++) {
             const networkOutputs = [];
             for (let i = 0; i < prototypes.length; i++) {
                 const networkOutput = trainWithPrototype(w, prototypes[i], desiredOutputs[i]);
@@ -151,16 +154,24 @@ function Apprentissage({ data: data, p: p }) {
 
         setNmseValues(nmseResults);
         setShowChart(true);
-        setlastWeight(w)
+        setHideButton(true)
+        setLastWeight(w)
+        setTimeout(() => {
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })
+            
+        }, 100);
     };
 
-    const showLastWeight = () => {
-        console.log(lastWeight);
+    const showOneStepPrediction = () => {
+        setOneStepPrediction(true)
+        setThreeStepPrediction(true)
+        setTenStepPrediction(true)
+        setTwentyStepPrediction(true)
     };
 
     // Data and options for Chart.js Line chart
     const dataForChart = {
-        labels: Array.from({ length: 100 }, (_, index) => index + 1),
+        labels: Array.from({ length: 40 }, (_, index) => index + 1),
         datasets: [
             {
                 label: 'NMSE',
@@ -172,15 +183,44 @@ function Apprentissage({ data: data, p: p }) {
             },
         ],
     };
+    const options = {
+        responsive: true,
+        plugins: {
+          legend: {
+            display: false,
+          },
+        },
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'Epoques',
+            },
+          },
+          y: {
+            // beginAtZero: true, // Ensure the y-axis begins at zero
+            title: {
+              display: true,
+              text: 'NMSE',
+            },
+          },
+        },
+      };
 
 
     return (
-        <div className='fifty'>
-            <button type="button" onClick={train}>Afficher le graphe d'apprentissage</button>
-            {showChart && 
+        <div className=''>
+            {!hideButton && <button type="button" onClick={train}>Afficher le graphe d'apprentissage</button>}
+            {showChart &&
                 <div className="sdfsdf">
-                    <Line data={dataForChart} />
-                    {/* <OneStepPrediction data={data} w={w}/> */}
+                    <Line data={dataForChart} options={options} className='chartjs' />
+                    <div className="centred">
+                        <button type="button" onClick={showOneStepPrediction}>Prédiction</button>
+                    </div>
+                    {oneStepPrediction && <OneStepAhead data={data} w={lastWeight} />}
+                    {threeStepPrediction && <ThreeStepsAhead data={data} w={lastWeight} />}
+                    {tenStepPrediction && <TenStepsAhead data={data} w={lastWeight} />}
+                    {twentyStepPrediction && <TwentyStepsAhead data={data} w={lastWeight} />}
 
                 </div>
 

@@ -1,23 +1,24 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 import { Line } from 'react-chartjs-2';
 import '../App.css';
-import Apprentissage from '../Prédiction/Apprentissage';
+import { index } from 'mathjs';
+import OneStepPrediction from './OneStepPrediction';
 
-function HiddenLayerUnits({ data: data, inputUnit: inputUnit }) {
+function Apprentissage({ data: data, p: p }) {
     const [nmseValues, setNmseValues] = useState([]);
     const [showChart, setShowChart] = useState(false);
-    const [showTrainButton, setShowTrainButton] = useState(false);
-    const [showTrain, setShowTrain] = useState(false);
-    const [hiddenUnitIndex, sethiddenUnitIndex] = useState(null);
-    const step = 0.2;
+    const [hideButton, setHideButton] = useState(false);
+    const [lastWeight, setlastWeight] = useState([]);
+    const step = 0.1;
 
     // Prepare prototypes and desired outputs from data
     const prototypes = [];
     const desiredOutputs = [];
 
-    for (let i = 0; i < data.length - inputUnit; i++) {
-        prototypes.push(data.slice(i, i + inputUnit));
-        desiredOutputs.push([data[i + inputUnit]]);
+    for (let i = 0; i < data.length - p; i++) {
+        prototypes.push(data.slice(i, i + p));
+        desiredOutputs.push([data[i + p]]);
     }
 
     // Function to generate random weights
@@ -44,16 +45,16 @@ function HiddenLayerUnits({ data: data, inputUnit: inputUnit }) {
 
     // Store weights for different hidden unit configurations
     const allWeightsPerUnits = [];
-    for (let hiddenUnits = 1; hiddenUnits <= inputUnit; hiddenUnits++) {
-        const layers = [inputUnit, hiddenUnits, 1];
+    for (let hiddenUnits = 1; hiddenUnits <= p; hiddenUnits++) {
+        const layers = [p, hiddenUnits, 1];
         allWeightsPerUnits.push(initializeWeights(layers));
     }
 
     // Sigmoid activation function
-    const sigmoid = (x) => (Math.exp(x) - Math.exp(-x)) / (Math.exp(x) + Math.exp(-x));
+    const sigmoid = (x) => 1 / (1 + Math.exp(-x));
 
     // Derivative of the sigmoid function
-    const sigmoidDerivative = (x) => 1 - Math.pow(sigmoid(x), 2)
+    const sigmoidDerivative = (x) => Math.exp(-x) / ((1 + Math.exp(-x)) ** 2);
 
     // Calculate the weighted sum of inputs
     const calculateActivation = (weights, inputs) => {
@@ -115,7 +116,7 @@ function HiddenLayerUnits({ data: data, inputUnit: inputUnit }) {
         const hiddenDelta = calculateHiddenLayerDelta(w, V, h, outputDelta);
 
         updateWeights(w, V, [hiddenDelta, outputDelta]);
-
+        // console.log(V[2]);
         return V[2]; // Return the output of the network
     };
 
@@ -128,13 +129,12 @@ function HiddenLayerUnits({ data: data, inputUnit: inputUnit }) {
     };
 
     // Train the network for all configurations and store NMSE values
-    const trainForHiddenUnits = () => {
+    const train = () => {
         const nmseResults = [];
+        let w = allWeightsPerUnits[p - 1]; // Retrieve pre-initialized weights
 
-        for (let hiddenUnits = 1; hiddenUnits < inputUnit; hiddenUnits++) {
-            const w = allWeightsPerUnits[hiddenUnits - 1]; // Retrieve pre-initialized weights
+        for (let epoch = 1; epoch <= 100; epoch++) {
             const networkOutputs = [];
-
             for (let i = 0; i < prototypes.length; i++) {
                 const networkOutput = trainWithPrototype(w, prototypes[i], desiredOutputs[i]);
                 networkOutputs.push(networkOutput[0]);
@@ -144,11 +144,7 @@ function HiddenLayerUnits({ data: data, inputUnit: inputUnit }) {
             const nmse = calculateNMSE(desiredValues, networkOutputs);
 
             nmseResults.push(nmse);
-            const minNmseValue = Math.min(...nmseResults);
-            const minNmseIndex = nmseResults.indexOf(minNmseValue);
-            sethiddenUnitIndex(minNmseIndex + 1)
-
-            console.log(`Hidden Units: ${hiddenUnits}`);
+            console.log(`Epoque : ${epoch}`);
             console.log('Updated weights:', w);
             console.log('NMSE:', nmse);
             console.log('\n\n');
@@ -156,83 +152,44 @@ function HiddenLayerUnits({ data: data, inputUnit: inputUnit }) {
 
         setNmseValues(nmseResults);
         setShowChart(true);
-        setTimeout(() => {
-            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })
-            setShowTrainButton(true)
-        }, 100);
-        setTimeout(() => {
-            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })
-        }, 200);
+        setHideButton(true)
+        setlastWeight(w)
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })
     };
 
-    const train = () => {
+    const showLastWeight = () => {
+        console.log(lastWeight);
     };
 
     // Data and options for Chart.js Line chart
     const dataForChart = {
-        labels: Array.from({ length: inputUnit - 1 }, (_, index) => index + 1),
+        labels: Array.from({ length: 100 }, (_, index) => index + 1),
         datasets: [
             {
                 label: 'NMSE',
                 data: nmseValues,
                 fill: false,
-                backgroundColor: nmseValues.map((value, index) =>
-                    value === Math.min(...nmseValues) ? 'red' : 'rgba(75,192,192,0.4)'
-                ),
+                backgroundColor: 'rgba(75,192,192,0.4)',
                 borderColor: 'rgba(75,192,192,1)',
-                pointBackgroundColor: nmseValues.map((value, index) =>
-                    value === Math.min(...nmseValues) ? 'red' : 'rgba(75,192,192,1)'
-                ),
+                pointBackgroundColor: 'rgba(75,192,192,1)',
             },
         ],
     };
-    const options = {
-        plugins: {
-            legend: {
-              display: false,
-            },
-          },
-        scales: {
-            x: {
-                ticks: {
-                    color: nmseValues.map((value) =>
-                        value === Math.min(...nmseValues) ? 'red' : 'rgba(240,240,240, 0.3)'
-                    ),
-                },
-                title: {
-                    display: true,
-                    text: 'Unités',
-                },
-                beginAtZero: true,
-            },
-            y: {
-                title: {
-                    display: true,
-                    text: 'NMSE',
-                },
-            }
-        },
-    };
+
 
     return (
-        <div className='centred'>
-            <button type="button" onClick={trainForHiddenUnits}>Calculer les NMSE</button>
+        <div className=''>
+            {!hideButton && <button type="button" onClick={train}>Afficher le graphe d'apprentissage</button>}
             {showChart && 
-                <div>
-                    <Line data={dataForChart} options={options} className='chartjs' />
-                    <h4>Le Nombre d'unités de la couche d'entrée est {hiddenUnitIndex} </h4>
-                </div>
-            }
-            {showTrainButton &&
-                <div className="centred">
-                    <div className="line"></div>
-                    <h2>Représentation graphique de l'apprentissage</h2>
-                    <Apprentissage data={data} inputUnit={inputUnit} hiddenUnit={hiddenUnitIndex} />
-                </div>
-            }
+                <div className="sdfsdf">
+                    <Line data={dataForChart} className='chartjs'/>
+                    {/* <OneStepPrediction data={data} w={w}/> */}
 
+                </div>
+
+            }
         </div>
     );
 }
 
-export default HiddenLayerUnits;
+export default Apprentissage;

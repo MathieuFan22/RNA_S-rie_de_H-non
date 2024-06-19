@@ -7,6 +7,7 @@ import { Chart as ChartJS, LineElement, CategoryScale, LinearScale, PointElement
 import { covarianceMatrix } from './matrixOperation';
 import HiddenLayerUnits from './HiddenLayerUnits';
 
+
 ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement, Title, Tooltip, Legend);
 
 const Architecture = ({ data }) => {
@@ -17,6 +18,7 @@ const Architecture = ({ data }) => {
   const [errorShowed, setErrorShowed] = useState(false);
   const [inputUnits, setInputUnits] = useState(null);
   const [showHiddenUnits, setshowHiddenUnits] = useState(false);
+  const [hideButton, setHideButton] = useState(false);
 
   const m = 9; // Dimension d'incorporation
   const t = 1; // Délai de mesure
@@ -132,10 +134,18 @@ const Architecture = ({ data }) => {
         ticks: {
           color: labelColors,
         },
+        title: {
+          display: true,
+          text: 'Unités',
+        },
       },
       y: {
         grid: {
           color: 'rgba(220, 220, 220, 0.1)',
+        },
+        title: {
+          display: true,
+          text: 'Erreurs',
         },
       },
     },
@@ -143,9 +153,11 @@ const Architecture = ({ data }) => {
 
   const showHiddenUnitsGraph = () => {
     setshowHiddenUnits(true)
+    setHideButton(true)
     setTimeout(() => {
       window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })
     }, 100);
+
   }
 
 
@@ -160,9 +172,9 @@ const Architecture = ({ data }) => {
 
   return (
     <div>
-      {!errorShowed && <h1>Matrice de covariance</h1>}
+      {/* {!errorShowed && <h1>Matrice de covariance</h1>} */}
       {!errorShowed && <button type="button" onClick={errors_calculator}>Calculer les erreurs d'approximation moyenne</button>}
-      {!errorShowed && (
+      {/* {!errorShowed && (
         <table cellPadding="5">
           <tbody>
             {covMatrix.map((row, rowIndex) => (
@@ -174,22 +186,23 @@ const Architecture = ({ data }) => {
             ))}
           </tbody>
         </table>
-      )}
+      )} */}
       {errorsData && errorShowed && (
         <div>
           <h2>Unités de couche d'entrée</h2>
           <Line data={dataForChart} options={optionsForChart} className='chartjs' />
           <h4>Le Nombre d'unités de la couche d'entrée est {inputUnits} </h4>
-          <div className='centred'>
+          {!hideButton &&<div className='centred'>
             <button type="button" onClick={showHiddenUnitsGraph}>Nombre d'unités cachées</button>
-          </div>
+          </div>}
           {showHiddenUnits &&
             <div className="centred">
               <div className="line"></div>
               <h2>Unités de la couche cachée</h2>
-              <HiddenLayerUnits data={data} p={inputUnits} />
+              <HiddenLayerUnits data={data} inputUnit={inputUnits} />
             </div>
           }
+          
         </div>
       )}
     </div>
