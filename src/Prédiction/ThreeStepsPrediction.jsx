@@ -71,12 +71,12 @@ function ThreeStepsAhead({ data, w }) {
     return (
         <div>
             <div className='centred'>
-                <button onClick={propagate3}>Three Steps Prediction</button>
+                <button onClick={propagate3}>Prédiction à 3 pas en avant</button>
             </div>
 
             {predictions3Step.length > 0 && (
                 <div>
-                    <h2>Three Steps Ahead Predictions:</h2>
+                    <h2>Prédiction à 3 pas en avant:</h2>
                     <Line data={chartData} />
                 </div>
             )}

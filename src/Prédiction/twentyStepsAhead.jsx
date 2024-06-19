@@ -71,12 +71,12 @@ function TwentyStepsAhead({ data, w }) {
     return (
         <div>
             <div className='centred'>
-                <button onClick={propagate20}>Twenty Steps Prediction</button>
+                <button onClick={propagate20}>Prédiction à 20 pas en avant</button>
             </div>
 
             {predictions20Step.length > 0 && (
                 <div>
-                    <h2>Twenty Steps Ahead Predictions:</h2>
+                    <h2>Prédiction à 20 pas en avant:</h2>
                     <Line data={chartData} />
                 </div>
             )}

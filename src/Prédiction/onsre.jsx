@@ -57,12 +57,12 @@ function OneStepAhead({ data, w }) {
     return (
         <div>
             <div className='centred'>
-                <button onClick={propagate1}>One Step Prediction</button>
+                <button onClick={propagate1}>Prédiction à un pas en avant</button>
             </div>
 
             {predictions1Step.length > 0 && (
                 <div>
-                    <h2>One Step Ahead Predictions:</h2>
+                    <h2>Prédiction à un pas en avant:</h2>
                     <Line data={chartData} />
                 </div>
             )}
