@@ -10,7 +10,7 @@ function FiftyValues() {
     const [buttonLabel, setButtonLabel] = useState("Voir la représentaion graphique");
     const toGraph = () => {
         setshowGraph(prev => !prev)
-        setButtonLabel("Voir les 500 valeurs")
+        setButtonLabel(showGraph? "Voir la représentaion graphique" : "Voir les 500 valeurs")
     };
     const data = calculateXY(0, 0, 500)
     return (
