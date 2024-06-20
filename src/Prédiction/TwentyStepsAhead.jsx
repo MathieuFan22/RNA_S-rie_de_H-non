@@ -51,14 +51,14 @@ function TwentyStepsAhead({ data, w }) {
         labels: Array.from({ length: datas.slice(40).length }, (_, i) => i + 1),
         datasets: [
             {
-                label: '20-Step Predictions',
+                label: 'Valeurs prédites',
                 data: predictions20Step.slice(10),
                 borderColor: 'blue',
                 backgroundColor: 'rgba(0, 0, 255, 0.2)',
                 fill: false,
             },
             {
-                label: 'Actual Data',
+                label: 'Valeurs existantes',
                 data: datas.slice(20),
                 borderColor: 'rgba(75,192,192,1)',
                 backgroundColor: 'rgba(75,192,192,1)',

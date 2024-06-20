@@ -208,13 +208,3 @@ const Architecture = ({ data }) => {
 };
 
 export default Architecture;
-
-
-{/* <ul>
-  {errorsData.map((value, index) => (
-    <li key={index}>
-      <span>[{index}] </span>
-      {value}
-    </li>
-  ))}
-</ul> */}

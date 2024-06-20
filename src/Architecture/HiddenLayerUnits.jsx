@@ -159,8 +159,7 @@ function HiddenLayerUnits({ data: data, inputUnit: inputUnit }) {
         }, 200);
     };
 
-    const train = () => {
-    };
+    
 
     const dataForChart = {
         labels: Array.from({ length: inputUnit - 1 }, (_, index) => index + 1),
@@ -170,11 +169,11 @@ function HiddenLayerUnits({ data: data, inputUnit: inputUnit }) {
                 data: nmseValues,
                 fill: false,
                 backgroundColor: nmseValues.map((value, index) =>
-                    value === Math.min(...nmseValues) ? 'red' : 'rgba(75,192,192,0.4)'
+                    value === Math.min(...nmseValues) ? 'rgb(0,255,0)' : 'rgba(75,192,192,0.4)'
                 ),
-                borderColor: 'rgba(75,192,192,1)',
-                pointBackgroundColor: nmseValues.map((value, index) =>
-                    value === Math.min(...nmseValues) ? 'red' : 'rgba(75,192,192,1)'
+                borderColor: 'rgba(75,192,192,0.4)',
+                pointRadius: nmseValues.map((value, index) =>
+                    value === Math.min(...nmseValues) ? 5 : 3
                 ),
             },
         ],
@@ -189,7 +188,7 @@ function HiddenLayerUnits({ data: data, inputUnit: inputUnit }) {
             x: {
                 ticks: {
                     color: nmseValues.map((value) =>
-                        value === Math.min(...nmseValues) ? 'red' : 'rgba(240,240,240, 0.3)'
+                        value === Math.min(...nmseValues) ? 'rgb(0,255,0)' : 'rgba(240,240,240, 0.3)'
                     ),
                 },
                 title: {

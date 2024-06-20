@@ -51,14 +51,14 @@ function TenStepsAhead({ data, w }) {
         labels: Array.from({ length: 10 }, (_, i) => i + 1),
         datasets: [
             {
-                label: '10-Step Predictions',
+                label: 'Valeurs prédites',
                 data: predictions10Step,
                 borderColor: 'blue',
                 backgroundColor: 'rgba(0, 0, 255, 0.2)',
                 fill: false,
             },
             {
-                label: 'Actual Data',
+                label: 'Valeurs existantes',
                 data: datas.slice(10, 20), 
                 borderColor: 'rgba(75,192,192,1)',
                 backgroundColor: 'rgba(75,192,192,0.2)',

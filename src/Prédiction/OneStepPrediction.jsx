@@ -41,14 +41,14 @@ function OneStepAhead({ data, w }) {
         labels: Array.from({ length: tenDatas.slice(5).length }, (_, i) => i + 1),
         datasets: [
             {
-                label: 'Predictions',
+                label: 'Valeurs prédites',
                 data: predictions1Step,
                 borderColor: 'blue',
                 backgroundColor: 'rgba(0, 0, 255, 0.2)',
                 fill: false,
             },
             {
-                label: 'Actual Data',
+                label: 'Valeurs existantes',
                 data: tenDatas.slice(5),
                 borderColor: 'rgba(75,192,192,1)',
                 backgroundColor: 'rgba(75,192,192,1)',
