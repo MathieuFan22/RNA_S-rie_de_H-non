@@ -1,21 +1,15 @@
 @font-face {
   font-family: 'Poppins-Regular';
   src: url('../assets/Fonts/Poppins-Regular.ttf') format('truetype');
-  /* You can also include additional font formats for better browser compatibility */
 }
 :root {
   font-family: Poppins-Regular, Arial, Helvetica, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-  /* user-select: none; */
-  color-scheme: light dark;
+  user-select: none;
   color: rgba(255, 255, 255, 0.87);
   background: #0b0c1a;
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
 a {
@@ -41,10 +35,10 @@ h1 {
 }
 
 button {
-  display: flex; /* Use flexbox */
-  justify-content: center; /* Center content horizontally */
-  align-items: center; /* Center content vertically */
-  /* width: 90%; */
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  
   height: 50px;
   border: none;
   border-radius: 8px;
@@ -54,9 +48,9 @@ button {
   background: rgb(55, 150, 150);
   cursor: pointer;
   transition: border-color 0.25s;
-  white-space: nowrap; /* Prevents text from wrapping */
-  overflow: hidden; /* Prevents text overflow */
-  text-overflow: ellipsis; /* Adds ellipsis (...) for overflowed text */
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis; 
   font-size: 16px !important;
 }
 
@@ -68,7 +62,7 @@ button:focus,
 button:focus-visible {
   background: #0d9992;
   color: rgb(255, 255, 255);
-  /* outline: 4px auto -webkit-focus-ring-color; */
+  
 }
 
 @media (prefers-color-scheme: light) {
