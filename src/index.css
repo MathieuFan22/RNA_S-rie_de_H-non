@@ -4,7 +4,7 @@
   /* You can also include additional font formats for better browser compatibility */
 }
 :root {
-  font-family: Poppins-Regular, Arial, Helvetica, sans-serif;
+  font-family: Poppins-Regular, Verdana, Geneva, Tahoma, sans-serif sans-serif;
   line-height: 1.5;
   font-weight: 400;
   /* user-select: none; */
