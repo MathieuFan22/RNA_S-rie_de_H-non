@@ -9,7 +9,7 @@ import Apprentissage from './Prédiction/Apprentissage';
 import Architecture from './Architecture/Architecture';
 
 const App = () => {
-  const [currentPage, setCurrentPage] = useState(2);
+  const [currentPage, setCurrentPage] = useState(0);
   const [dropdowns, setDropdowns] = useState({
     architecture: false,
     prediction: false,
@@ -43,14 +43,8 @@ const App = () => {
           <button type="button" onClick={() => toPage(1)}>Série temporelle</button>
         </div>
 
-        {/* Architecture Dropdown */}
-        <div className='dropdown' onClick={() => toggleDropdown('architecture')}>
-          <h4>Architecture</h4> <FontAwesomeIcon icon={dropdowns.architecture ? faCaretUp : faCaretDown} />
-        </div>
-        <div className={`dropdown-content ${dropdowns.architecture ? 'visible' : ''}`}>
-          <button type="button" onClick={() => toPage(2)}>Architecture</button>
-        </div>
-       
+    
+   
         
 
         {/* Prediction Dropdown */}
@@ -58,7 +52,7 @@ const App = () => {
           <h4>Prédiction</h4> <FontAwesomeIcon icon={dropdowns.prediction ? faCaretUp : faCaretDown} />
         </div>
         <div className={`dropdown-content ${dropdowns.prediction ? 'visible' : ''}`}>
-          <button type="button" onClick={() => toPage(4)}>Apprentissage</button>
+        <button type="button" onClick={() => toPage(2)}>Prédiction</button>
         </div>
         
 
@@ -68,7 +62,6 @@ const App = () => {
         {currentPage === 0 && <FiftyValues />}
         {currentPage === 1 && <HenonSequences data={data} />}
         {currentPage === 2 && <Architecture data={data} />}
-        {currentPage === 4 && <Apprentissage data={data} inputUnit={5}/>}
       </div>
     </div>
   );

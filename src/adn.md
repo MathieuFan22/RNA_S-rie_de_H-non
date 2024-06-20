@@ -116,3 +116,131 @@ function WeightUpdate() {
 }
 
 export default WeightUpdate;
+
+
+/*/*/*/*/*/*/
+I have this one step ahead prediction
+import React, { useState } from 'react';
+import { Line } from 'react-chartjs-2';
+
+function OneStepAhead({ data, w }) {
+    const datas = data.slice(100, 115);
+    
+    const sigmoid = (x) => (Math.exp(x) - Math.exp(-x)) / (Math.exp(x) + Math.exp(-x));
+
+    const calculateActivation = (weights, inputs) => {
+        return weights.reduce((sum, weight, index) => sum + weight * inputs[index], 0);
+    };
+
+    const [predictions1Step, setPredictions1Step] = useState([]);
+
+    const propagate1 = () => {
+        const numPrototypes = datas.length - 5;
+        const newPredictions = [];
+
+        for (let p = 0; p < numPrototypes; p++) {
+            const initialInputs = datas.slice(p, p + 5);
+            const V = [initialInputs, [], []];
+
+            for (let layer = 0; layer < w.length; layer++) {
+                for (let neuronIndex = 0; neuronIndex < w[layer][0].length; neuronIndex++) {
+                    const wForNeuron = w[layer].map(row => row[neuronIndex]);
+                    const activation = calculateActivation(wForNeuron, V[layer]);
+                    V[layer + 1].push(layer === w.length - 1 ? activation : sigmoid(activation));
+                }
+            }
+
+            newPredictions.push(V[V.length - 1][0]); // Push the predicted output
+        }
+
+        setPredictions1Step(newPredictions);
+    };
+
+    const chartData = {
+        labels: Array.from({ length: datas.slice(5).length }, (_, i) => i + 1),
+        datasets: [
+            {
+                label: 'Predictions',
+                data: predictions1Step,
+                borderColor: 'blue',
+                backgroundColor: 'rgba(0, 0, 255, 0.2)',
+                fill: false,
+            },
+            {
+                label: 'Actual Data',
+                data: datas.slice(5),
+                borderColor: 'rgba(75,192,192,1)',
+                backgroundColor: 'rgba(75,192,192,1)',
+                fill: false,
+            },
+        ],
+    };
+
+    return (
+        <div>
+            <div className='centred'>
+                <button onClick={propagate1}>Prédiction à un pas en avant</button>
+            </div>
+
+            {predictions1Step.length > 0 && (
+                <div>
+                    <h2>Prédiction à un pas en avant:</h2>
+                    <Line data={chartData} />
+                </div>
+            )}
+        </div>
+    );
+}
+
+export default OneStepAhead;
+Now I want to create another jsx component of three steps ahead
+With the one step ahead one protoype give one predicted value
+But with the three steps ahead one prototype give three predicted values (so a prototype should be an array : finalPrototypes = [[initialPrototype1, subPrototype11, subPrototype12], [initialPrototype2, subPrototype21, subPrototype22], [initialPrototype3, subPrototype31, subPrototype32], [initialPrototype4, subPrototype41, subPrototype42], .... ])
+FOr example , with one step:
+firstPrototype = [u1, u2, u3, u4, u5] // The predicted value is predictedU6
+secondPrototype = [u2, u3, u4, u5, u6] // The predicted value is predictedU7
+
+With three steps ahead :
+prototypes = [
+    [[u1,u2,u3,u4,u5],[],[]], // WHen We have a new predictedValue : predictedU6, it became be the first element of the next subPrototype and the last element will be poped because we should have a prototype of 5 elements (the first subPrototype here is [predictedU6, u1, u2, u3, u4] )
+    [[u4,u5,u6,u7,u8],[],[]],
+    [[u7,u8,u9,u10,u11],[],[]],
+    [[u10,u11,u12,u13,u14],[],[]],
+    ...
+   
+]
+The first prototype:
+firstPrototype = [u1, u2, u3, u4, u5] // The predicted value is predictedU6
+subPrototype11 = [predictedU6, u1, u2, u3, u4] // The predicted value is predictedU7
+subPrototype12 = [predictedU7, predictedU6, u1, u2, u3] // The predicted value is predictedU8
+
+secondPrototype = [u4, u5, u6, u7, u8]  // The predicted value is predictedU9
+subPrototype12 = [predictedU9, u4, u5, u6, u7]  // The predicted value is predictedU10
+subPrototype22 = [predictedU10, predictedU9, u4, u5, u6]  // The predicted value is predictedU11
+
+thirdPrototype = [u7, u8, u9, u10, u11]  // The predicted value is predictedU12
+subPrototype31 = [predictedU12, u7, u8, u9, u10]  // The predicted value is predictedU13
+subPrototype32 = [predictedU13, predictedU12, u7, u8, u9]  // The predicted value is predictedU14
+
+fourthPrototype = [u10, u11, u12, u13, u14]  // The predicted value is predictedU15
+subPrototype31 = [predictedU15, u10, u11, u12, u13]  // The predicted value is predictedU16
+subPrototype32 = [predictedU16, predictedU15, u10, u11, u12]  // The predicted value is predictedU17
+
+And so on...
+
+You can change this const datas = data.slice(100, 115); but the goal is always to display 10 predicted and 10 existing values
+NB: Make it dynamic and flexible (don't forget to update the code for the chart)
+
+Now, do the same thing with 10 steps ahead:
+A prototype should have 10 arrays (the initial prototype and 9 subPrototype) to give 10 predicted value
+SO the first prototype will be like this :
+firstPrototype = [u1, u2, u3, u4, u5] // The predicted value is predictedU6
+subPrototype11 = [predictedU6, u1, u2, u3, u4] // The predicted value is predictedU7
+subPrototype12 = [predictedU7, predictedU6, u1, u2, u3] // The predicted value is predictedU8
+subPrototype13 = [predictedU8,predictedU7, predictedU6, u1, u2] // The predicted value is predictedU9
+subPrototype14 = [predictedU9,predictedU8,predictedU7, predictedU6, u1] // The predicted value is predictedU10
+subPrototype15 = [predictedU10,predictedU9,predictedU8,predictedU7, predictedU6] // The predicted value is predictedU11
+subPrototype16 = [predictedU11,predictedU10,predictedU9,predictedU8, predictedU7] // The predicted value is predictedU12
+subPrototype17 = [predictedU12, predictedU11,predictedU10,predictedU9,predictedU8] // The predicted value is predictedU13
+subPrototype18 = [predictedU13, predictedU12, predictedU11,predictedU10,predictedU9] // The predicted value is predictedU14
+subPrototype19 = [predictedU14, predictedU13, predictedU12, predictedU11,predictedU10] // The predicted value is predictedU15

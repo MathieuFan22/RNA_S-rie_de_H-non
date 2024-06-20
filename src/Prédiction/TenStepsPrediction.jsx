@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Line } from 'react-chartjs-2';
 
 function TenStepsAhead({ data, w }) {
-    const tenDatas = data.slice(100, 115);
-
+    const datas = data.slice(100, 140);  // Adjusted slice to have enough data points
+    
     const sigmoid = (x) => (Math.exp(x) - Math.exp(-x)) / (Math.exp(x) + Math.exp(-x));
 
     const calculateActivation = (weights, inputs) => {
@@ -13,16 +13,15 @@ function TenStepsAhead({ data, w }) {
     const [predictions10Step, setPredictions10Step] = useState([]);
 
     const propagate10 = () => {
-        const numPrototypes = tenDatas.length - 5;
+        const numPrototypes = datas.length - 5;
         const newPredictions = [];
 
         for (let p = 0; p < numPrototypes; p++) {
-            let initialInputs = tenDatas.slice(p, p + 5);
-            const V = [initialInputs, [], []];
-
-            let predictedValues = [];
+            let prototypes = [[datas.slice(p, p + 5), ...Array(9).fill([])]];
+            let currentPredictions = [];
 
             for (let step = 0; step < 10; step++) {
+                const V = prototypes[step];
                 for (let layer = 0; layer < w.length; layer++) {
                     for (let neuronIndex = 0; neuronIndex < w[layer][0].length; neuronIndex++) {
                         const wForNeuron = w[layer].map(row => row[neuronIndex]);
@@ -30,29 +29,29 @@ function TenStepsAhead({ data, w }) {
                         V[layer + 1].push(layer === w.length - 1 ? activation : sigmoid(activation));
                     }
                 }
-
                 const predictedValue = V[V.length - 1][0];
-                predictedValues.push(predictedValue);
+                currentPredictions.push(predictedValue);
 
-                if (step < 9) { // Update the inputs for the next step
-                    initialInputs = [predictedValue, ...initialInputs.slice(0, 4)];
-                    V[0] = initialInputs;
-                    V[1] = [];
-                    V[2] = [];
+                if (step < 9) {
+                    prototypes.push([[], ...Array(9).fill([])]);
+                    prototypes[step + 1][0] = [predictedValue, ...prototypes[step][0].slice(0, 4)];
                 }
             }
 
-            newPredictions.push(predictedValues[9]); // Push the tenth step prediction
+            newPredictions.push(...currentPredictions);
         }
 
-        setPredictions10Step(newPredictions);
+        setPredictions10Step(newPredictions.slice(1, 11)); // Display only 10 predictions
+        setTimeout(() => {
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })
+        }, 100);
     };
 
     const chartData = {
-        labels: Array.from({ length: tenDatas.slice(5).length }, (_, i) => i + 1),
+        labels: Array.from({ length: 10 }, (_, i) => i + 1),
         datasets: [
             {
-                label: 'Predictions',
+                label: '10-Step Predictions',
                 data: predictions10Step,
                 borderColor: 'blue',
                 backgroundColor: 'rgba(0, 0, 255, 0.2)',
@@ -60,9 +59,9 @@ function TenStepsAhead({ data, w }) {
             },
             {
                 label: 'Actual Data',
-                data: tenDatas.slice(5),
+                data: datas.slice(10, 20), // Display the next 10 actual data points
                 borderColor: 'rgba(75,192,192,1)',
-                backgroundColor: 'rgba(75,192,192,1)',
+                backgroundColor: 'rgba(75,192,192,0.2)',
                 fill: false,
             },
         ],
@@ -71,12 +70,12 @@ function TenStepsAhead({ data, w }) {
     return (
         <div>
             <div className='centred'>
-                <button onClick={propagate10}>Prédiction à 10 pas en avant</button>
+                <button onClick={propagate10}>Prédiction à dix pas en avant</button>
             </div>
 
             {predictions10Step.length > 0 && (
                 <div>
-                    <h2>Prédiction à 10 pas en avant:</h2>
+                    <h2>Prédiction à dix pas en avant:</h2>
                     <Line data={chartData} />
                 </div>
             )}

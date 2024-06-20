@@ -1,38 +1,24 @@
 import React, { useState } from 'react';
 import { Line } from 'react-chartjs-2';
 
-function OneStepPrediction({ data, w }) {
-
-
-    // /** ***/
-    // const datas = [0.2, 0.4, 0.1, 0.1, 0.5];
-    // const weights = [
-    //     [
-    //         [0.1, 0.1],
-    //         [0.2, 0.2]
-    //     ],
-    //     [
-    //         [0.1],
-    //         [0.3]
-    //     ]
-    // ];
-
+function OneStepAhead({ data, w }) {
+    const tenDatas = data.slice(100, 115);
+    
     const sigmoid = (x) => (Math.exp(x) - Math.exp(-x)) / (Math.exp(x) + Math.exp(-x));
 
-    // Function to calculate the weighted sum of inputs
     const calculateActivation = (weights, inputs) => {
         return weights.reduce((sum, weight, index) => sum + weight * inputs[index], 0);
     };
 
     const [predictions1Step, setPredictions1Step] = useState([]);
-    const [predictions3Step, setPredictions3Step] = useState([]);
 
     const propagate1 = () => {
-        const numPrototypes = data.length - 5;
+        const numPrototypes = tenDatas.length - 5;
         const newPredictions = [];
 
         for (let p = 0; p < numPrototypes; p++) {
-            const V = [[data[p], data[p + 1], data[p + 2], data[p + 3], data[p + 4]], [], []];
+            const initialInputs = tenDatas.slice(p, p + 5);
+            const V = [initialInputs, [], []];
 
             for (let layer = 0; layer < w.length; layer++) {
                 for (let neuronIndex = 0; neuronIndex < w[layer][0].length; neuronIndex++) {
@@ -46,81 +32,45 @@ function OneStepPrediction({ data, w }) {
         }
 
         setPredictions1Step(newPredictions);
+        setTimeout(() => {
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })
+        }, 100);
     };
 
-    // const propagate3 = () => {
-    //     const numPrototypes = datas.length - 4;
-    //     const newPredictions = [];
-
-    //     for (let p = 0; p < numPrototypes; p++) {
-    //         let V = [[datas[p], datas[p + 1]], [], []];
-
-    //         for (let layer = 0; layer < weights.length; layer++) {
-    //             for (let neuronIndex = 0; neuronIndex < weights[layer][0].length; neuronIndex++) {
-    //                 const weightsForNeuron = weights[layer].map(row => row[neuronIndex]);
-    //                 const activation = calculateActivation(weightsForNeuron, V[layer]);
-    //                 V[layer + 1].push(layer === weights.length - 1 ? activation : sigmoid(activation));
-    //             }
-    //         }
-
-    //         newPredictions.push(V[V.length - 1][0]);
-    //         V = [[newPredictions[newPredictions.length - 1], datas[p + 2]], [], []];
-
-    //         for (let layer = 0; layer < weights.length; layer++) {
-    //             for (let neuronIndex = 0; neuronIndex < weights[layer][0].length; neuronIndex++) {
-    //                 const weightsForNeuron = weights[layer].map(row => row[neuronIndex]);
-    //                 const activation = calculateActivation(weightsForNeuron, V[layer]);
-    //                 V[layer + 1].push(layer === weights.length - 1 ? activation : sigmoid(activation));
-    //             }
-    //         }
-
-    //         newPredictions.push(V[V.length - 1][0]);
-    //         V = [[newPredictions[newPredictions.length - 2], newPredictions[newPredictions.length - 1]], [], []];
-
-    //         for (let layer = 0; layer < weights.length; layer++) {
-    //             for (let neuronIndex = 0; neuronIndex < weights[layer][0].length; neuronIndex++) {
-    //                 const weightsForNeuron = weights[layer].map(row => row[neuronIndex]);
-    //                 const activation = calculateActivation(weightsForNeuron, V[layer]);
-    //                 V[layer + 1].push(layer === weights.length - 1 ? activation : sigmoid(activation));
-    //             }
-    //         }
-
-    //         newPredictions.push(V[V.length - 1][0]);
-    //     }
-
-    //     setPredictions3Step(newPredictions);
-    // };
+    const chartData = {
+        labels: Array.from({ length: tenDatas.slice(5).length }, (_, i) => i + 1),
+        datasets: [
+            {
+                label: 'Predictions',
+                data: predictions1Step,
+                borderColor: 'blue',
+                backgroundColor: 'rgba(0, 0, 255, 0.2)',
+                fill: false,
+            },
+            {
+                label: 'Actual Data',
+                data: tenDatas.slice(5),
+                borderColor: 'rgba(75,192,192,1)',
+                backgroundColor: 'rgba(75,192,192,1)',
+                fill: false,
+            },
+        ],
+    };
 
     return (
         <div>
             <div className='centred'>
-                <button onClick={propagate1}>One Step Prediction</button>
-                {/* <button onClick={propagate3}>Three Step Prediction</button> */}
+                <button onClick={propagate1}>Prédiction à un pas en avant</button>
             </div>
 
             {predictions1Step.length > 0 && (
                 <div>
                     <h2>Prédiction à un pas en avant:</h2>
-                    <ul>
-                        {predictions1Step.map((prediction, index) => (
-                            <li key={index}>{`u(${index + 1}): ${prediction}`}</li>
-                        ))}
-                    </ul>
+                    <Line data={chartData} />
                 </div>
             )}
-
-            {/* {predictions3Step.length > 0 && (
-                <div>
-                    <h2>Prédiction à trois pas en avant:</h2>
-                    <ul>
-                        {predictions3Step.map((prediction, index) => (
-                            <li key={index}>{`u(${index + 1}): ${prediction}`}</li>
-                        ))}
-                    </ul>
-                </div>
-            )} */}
         </div>
     );
 }
 
-export default OneStepPrediction;
+export default OneStepAhead;

@@ -2,9 +2,7 @@
 import React, { useState } from 'react';
 import { Line } from 'react-chartjs-2';
 import '../App.css';
-import { index } from 'mathjs';
-import OneStepPrediction from './OneStepPrediction';
-import OneStepAhead from './onsre';
+import OneStepAhead from './OneStepPrediction';
 import ThreeStepsAhead from './ThreeStepsPrediction';
 import TenStepsAhead from './TenStepsPrediction';
 import TwentyStepsAhead from './twentyStepsAhead';
@@ -158,11 +156,11 @@ function Apprentissage({ data: data, inputUnit: inputUnit, hiddenUnit: hiddenUni
         setLastWeight(w)
         setTimeout(() => {
             window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })
-            
         }, 100);
+        showPrediction()
     };
 
-    const showOneStepPrediction = () => {
+    const showPrediction = () => {
         setOneStepPrediction(true)
         setThreeStepPrediction(true)
         setTenStepPrediction(true)
@@ -214,9 +212,9 @@ function Apprentissage({ data: data, inputUnit: inputUnit, hiddenUnit: hiddenUni
             {showChart &&
                 <div className="sdfsdf">
                     <Line data={dataForChart} options={options} className='chartjs' />
-                    <div className="centred">
+                    {/* <div className="centred">
                         <button type="button" onClick={showOneStepPrediction}>Prédiction</button>
-                    </div>
+                    </div> */}
                     {oneStepPrediction && <OneStepAhead data={data} w={lastWeight} />}
                     {threeStepPrediction && <ThreeStepsAhead data={data} w={lastWeight} />}
                     {tenStepPrediction && <TenStepsAhead data={data} w={lastWeight} />}

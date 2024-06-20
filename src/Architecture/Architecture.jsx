@@ -173,7 +173,12 @@ const Architecture = ({ data }) => {
   return (
     <div>
       {/* {!errorShowed && <h1>Matrice de covariance</h1>} */}
-      {!errorShowed && <button type="button" onClick={errors_calculator}>Calculer les erreurs d'approximation moyenne</button>}
+      {!errorShowed && 
+        <div>
+          <h2>Cherchons l'architecture optimale</h2>
+          <button type="button" onClick={errors_calculator}>Calculer les erreurs d'approximation moyenne</button>
+        </div>
+      }
       {/* {!errorShowed && (
         <table cellPadding="5">
           <tbody>
