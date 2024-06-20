@@ -18,7 +18,7 @@ function Apprentissage({ data: data, inputUnit: inputUnit, hiddenUnit: hiddenUni
     const [twentyStepPrediction, setTwentyStepPrediction] = useState(false);
     const step = 0.2;
 
-    // Prepare prototypes and desired outputs from data
+    // Préparer les prototypes et les sorties désirées
     const prototypes = [];
     const desiredOutputs = [];
 
@@ -27,11 +27,12 @@ function Apprentissage({ data: data, inputUnit: inputUnit, hiddenUnit: hiddenUni
         desiredOutputs.push([data[i + inputUnit]]);
     }
 
-    // Function to generate random weights
+    // Générer des poids aléatoires
     function getRandomWeight(min, max) {
         return Math.random() * (max - min) + min;
     }
 
+    // Initialiser les poids pour une confifuration de couche donnée
     function initializeWeights(layers) {
         const weights = [];
         for (let i = 0; i < layers.length - 1; i++) {
@@ -51,18 +52,18 @@ function Apprentissage({ data: data, inputUnit: inputUnit, hiddenUnit: hiddenUni
     const layers = [inputUnit, 1, 1];
     const w = initializeWeights(layers);
 
-    // Sigmoid activation function
+    // Fonction d'activation (Sigmoïde)
     const sigmoid = (x) => (Math.exp(x) - Math.exp(-x)) / (Math.exp(x) + Math.exp(-x));
 
-    // Derivative of the sigmoid function
+    // Dérivé de la fonction sigmoïde
     const sigmoidDerivative = (x) => 1 - Math.pow(sigmoid(x), 2)
 
-    // Calculate the weighted sum of inputs
+
     const calculateActivation = (weights, inputs) => {
         return weights.reduce((sum, weight, index) => sum + weight * inputs[index], 0);
     };
 
-    // Perform forward propagation through the neural network
+    // Propagation vers l'avant à travers le réseau
     const forwardPropagation = (w, V, h) => {
         for (let m = 0; m < w.length; m++) {
             for (let i = 0; i < w[m][0].length; i++) {
@@ -74,7 +75,7 @@ function Apprentissage({ data: data, inputUnit: inputUnit, hiddenUnit: hiddenUni
         }
     };
 
-    // Calculate delta for the output layer
+    // Calcul des Deltas pour la couche de sortie
     const calculateOutputLayerDelta = (w, V, h, desiredOutput) => {
         const delta = [];
         for (let i = 0; i < w[1][0].length; i++) {
@@ -83,7 +84,7 @@ function Apprentissage({ data: data, inputUnit: inputUnit, hiddenUnit: hiddenUni
         return delta;
     };
 
-    // Calculate delta for the hidden layer
+    // Calcul des Deltas pour la couche cachée
     const calculateHiddenLayerDelta = (w, V, h, outputDelta) => {
         const delta = [];
         let tmp = [];
@@ -95,7 +96,7 @@ function Apprentissage({ data: data, inputUnit: inputUnit, hiddenUnit: hiddenUni
         return delta;
     };
 
-    // Update weights based on delta and learning rate
+    // Mise à jour des poids
     const updateWeights = (w, V, delta) => {
         for (let m = 0; m < w.length; m++) {
             for (let i = 0; i < w[m].length; i++) {
@@ -106,7 +107,7 @@ function Apprentissage({ data: data, inputUnit: inputUnit, hiddenUnit: hiddenUni
         }
     };
 
-    // Train the neural network with a given prototype and desired output
+    // Apprentissage avec tous les prototypes
     const trainWithPrototype = (w, prototype, desiredOutput) => {
         const V = [[...prototype], [], []];
         const h = [[], [], []];
@@ -117,11 +118,11 @@ function Apprentissage({ data: data, inputUnit: inputUnit, hiddenUnit: hiddenUni
         const hiddenDelta = calculateHiddenLayerDelta(w, V, h, outputDelta);
 
         updateWeights(w, V, [hiddenDelta, outputDelta]);
-        // console.log(V[2]);
-        return V[2]; // Return the output of the network
+
+        return V[2]; // Retourne la valeur donnée par le réseau
     };
 
-    // Calculate Normalized Mean Squared Error (NMSE)
+
     const calculateNMSE = (desired, predicted) => {
         const mean = desired.reduce((sum, val) => sum + val, 0) / desired.length;
         const mse = desired.reduce((sum, val, idx) => sum + Math.pow(val - predicted[idx], 2), 0) / desired.length;
@@ -129,7 +130,7 @@ function Apprentissage({ data: data, inputUnit: inputUnit, hiddenUnit: hiddenUni
         return mse / variance;
     };
 
-    // Train the network for all configurations and store NMSE values
+    // Apprentissage pour toutes les configurations et stocker les NMSE
     const train = () => {
         const nmseResults = [];
 
@@ -144,10 +145,6 @@ function Apprentissage({ data: data, inputUnit: inputUnit, hiddenUnit: hiddenUni
             const nmse = calculateNMSE(desiredValues, networkOutputs);
 
             nmseResults.push(nmse);
-            console.log(`Epoque : ${epoch}`);
-            console.log('Updated weights:', w);
-            console.log('NMSE:', nmse);
-            console.log('\n\n');
         }
 
         setNmseValues(nmseResults);
@@ -167,7 +164,6 @@ function Apprentissage({ data: data, inputUnit: inputUnit, hiddenUnit: hiddenUni
         setTwentyStepPrediction(true)
     };
 
-    // Data and options for Chart.js Line chart
     const dataForChart = {
         labels: Array.from({ length: 40 }, (_, index) => index + 1),
         datasets: [
@@ -184,26 +180,25 @@ function Apprentissage({ data: data, inputUnit: inputUnit, hiddenUnit: hiddenUni
     const options = {
         responsive: true,
         plugins: {
-          legend: {
-            display: false,
-          },
+            legend: {
+                display: false,
+            },
         },
         scales: {
-          x: {
-            title: {
-              display: true,
-              text: 'Epoques',
+            x: {
+                title: {
+                    display: true,
+                    text: 'Epoques',
+                },
             },
-          },
-          y: {
-            // beginAtZero: true, // Ensure the y-axis begins at zero
-            title: {
-              display: true,
-              text: 'NMSE',
+            y: {
+                title: {
+                    display: true,
+                    text: 'NMSE',
+                },
             },
-          },
         },
-      };
+    };
 
 
     return (

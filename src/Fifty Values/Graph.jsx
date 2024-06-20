@@ -26,7 +26,6 @@ const dataPoints = calculateXY(0, 0, 500)
 const data = {
   labels: dataPoints.map(point => point[0].toFixed(2)),
   datasets: [{
-      label: 'Data 1',
       data: dataPoints.map(point => (point[1])),
       backgroundColor: 'rgb(16,217,219)',
       borderColor: 'black',

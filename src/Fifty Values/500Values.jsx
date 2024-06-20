@@ -4,10 +4,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons';
 import calculateXY from './get500Values';
 import Graph from './Graph';
-// import calculateXY from './get500Values';
 
 function FiftyValues() {
-    // const data = calculateXY(0, 0, 500);
     const [showGraph, setshowGraph] = useState(false);
     const [buttonLabel, setButtonLabel] = useState("Voir la représentaion graphique");
     const toGraph = () => {

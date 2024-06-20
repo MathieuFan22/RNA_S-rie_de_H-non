@@ -172,26 +172,19 @@ const Architecture = ({ data }) => {
 
   return (
     <div>
-      {/* {!errorShowed && <h1>Matrice de covariance</h1>} */}
       {!errorShowed && 
-        <div>
+        <div className='centred'>
           <h2>Cherchons l'architecture optimale</h2>
+          <h4 className='description'>Pour optimiser l'architecture d'un réseau de neurones pour la prédiction, 
+          l'unité de la couche d'entrée est déterminée par l'algorithme de Takens, en utilisant la racine carrée 
+          de la valeur propre de l'index + 1 de la matrice de covariance de X<sup>i</sup>. 
+          Le nombre d'unités correspond au premier plateau des valeurs propres. 
+          Pour les couches cachées, on teste différentes configurations et on sélectionne celle qui minimise le NMSE. 
+          Cette méthode assure une seule unité de sortie, optimisant les performances du réseau.</h4>
           <button type="button" onClick={errors_calculator}>Calculer les erreurs d'approximation moyenne</button>
         </div>
       }
-      {/* {!errorShowed && (
-        <table cellPadding="5">
-          <tbody>
-            {covMatrix.map((row, rowIndex) => (
-              <tr key={rowIndex}>
-                {row.map((value, colIndex) => (
-                  <td key={colIndex}>{value}</td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )} */}
+      
       {errorsData && errorShowed && (
         <div>
           <h2>Unités de couche d'entrée</h2>

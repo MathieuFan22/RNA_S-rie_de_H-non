@@ -5,7 +5,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons';
 import HenonSequences from './Architecture/HenonSequence';
 import calculateXY from './Fifty Values/get500Values';
-import Apprentissage from './Prédiction/Apprentissage';
 import Architecture from './Architecture/Architecture';
 
 const App = () => {
@@ -13,7 +12,7 @@ const App = () => {
   const [dropdowns, setDropdowns] = useState({
     architecture: false,
     prediction: false,
-    series: false  // State for series dropdown
+    series: false 
   });
 
   const datas = calculateXY(0, 0, 500);
@@ -43,9 +42,6 @@ const App = () => {
           <button type="button" onClick={() => toPage(1)}>Séquences</button>
         </div>
 
-    
-   
-        
 
         {/* Prediction Dropdown */}
         <div className='dropdown' onClick={() => toggleDropdown('prediction')}>

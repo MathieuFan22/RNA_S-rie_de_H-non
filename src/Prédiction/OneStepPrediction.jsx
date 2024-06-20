@@ -28,7 +28,7 @@ function OneStepAhead({ data, w }) {
                 }
             }
 
-            newPredictions.push(V[V.length - 1][0]); // Push the predicted output
+            newPredictions.push(V[V.length - 1][0]); // Ajouter la valeur prédite
         }
 
         setPredictions1Step(newPredictions);

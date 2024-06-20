@@ -1,7 +1,6 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons';
-// import './App.css';
 
 const HenonSequences = ({ data }) => {
     const m = 9; // Dimension d'incorporation

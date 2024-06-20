@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Line } from 'react-chartjs-2';
 
 function TwentyStepsAhead({ data, w }) {
-    const datas = data.slice(100, 150);  // Adjusted slice to have enough data points
+    const datas = data.slice(100, 150); 
     
     const sigmoid = (x) => (Math.exp(x) - Math.exp(-x)) / (Math.exp(x) + Math.exp(-x));
 

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Line } from 'react-chartjs-2';
 
 function TenStepsAhead({ data, w }) {
-    const datas = data.slice(100, 140);  // Adjusted slice to have enough data points
+    const datas = data.slice(100, 140);  
     
     const sigmoid = (x) => (Math.exp(x) - Math.exp(-x)) / (Math.exp(x) + Math.exp(-x));
 
@@ -41,7 +41,7 @@ function TenStepsAhead({ data, w }) {
             newPredictions.push(...currentPredictions);
         }
 
-        setPredictions10Step(newPredictions.slice(1, 11)); // Display only 10 predictions
+        setPredictions10Step(newPredictions.slice(1, 11)); 
         setTimeout(() => {
             window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })
         }, 100);
@@ -59,7 +59,7 @@ function TenStepsAhead({ data, w }) {
             },
             {
                 label: 'Actual Data',
-                data: datas.slice(10, 20), // Display the next 10 actual data points
+                data: datas.slice(10, 20), 
                 borderColor: 'rgba(75,192,192,1)',
                 backgroundColor: 'rgba(75,192,192,0.2)',
                 fill: false,
