@@ -27,7 +27,7 @@ function ThreeStepsAhead({ data, w }) {
                         const wForNeuron = w[layer].map(row => row[neuronIndex]);
                         const activation = calculateActivation(wForNeuron, V[layer]);
                         V[layer + 1].push(layer === w.length - 1 ? activation : sigmoid(activation));
-                    }
+                    }temporelle
                 }
                 const predictedValue = V[V.length - 1][0];
                 currentPredictions.push(predictedValue);

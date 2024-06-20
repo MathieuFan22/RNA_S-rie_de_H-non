@@ -1,4 +1,6 @@
 import React from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons';
 // import './App.css';
 
 const HenonSequences = ({ data }) => {
@@ -45,8 +47,8 @@ const HenonSequences = ({ data }) => {
                 </div>
             ))}
             <div className="scrollButtons">
-                <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>Up</button>
-                <button onClick={() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })}>Down</button>
+                <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}><FontAwesomeIcon icon={faCaretUp}/></button>
+                <button onClick={() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })}><FontAwesomeIcon icon={faCaretDown}/></button>
             </div>
         </div>
     );

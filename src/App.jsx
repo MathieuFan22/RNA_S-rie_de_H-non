@@ -3,7 +3,7 @@ import './App.css';
 import FiftyValues from './Fifty Values/500Values';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons';
-import HenonSequences from './HenonSequence';
+import HenonSequences from './Architecture/HenonSequence';
 import calculateXY from './Fifty Values/get500Values';
 import Apprentissage from './Prédiction/Apprentissage';
 import Architecture from './Architecture/Architecture';
@@ -39,8 +39,8 @@ const App = () => {
           <h4>Series</h4> <FontAwesomeIcon icon={dropdowns.series ? faCaretUp : faCaretDown} />
         </div>
         <div className={`dropdown-content ${dropdowns.series ? 'visible' : ''}`}>
-          <button type="button" onClick={() => toPage(0)}>500 Values</button>
-          <button type="button" onClick={() => toPage(1)}>Série temporelle</button>
+          <button type="button" onClick={() => toPage(0)}>500 Valeurs</button>
+          <button type="button" onClick={() => toPage(1)}>Séquences</button>
         </div>
 
     

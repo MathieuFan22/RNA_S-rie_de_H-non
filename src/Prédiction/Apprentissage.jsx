@@ -5,7 +5,7 @@ import '../App.css';
 import OneStepAhead from './OneStepPrediction';
 import ThreeStepsAhead from './ThreeStepsPrediction';
 import TenStepsAhead from './TenStepsPrediction';
-import TwentyStepsAhead from './twentyStepsAhead';
+import TwentyStepsAhead from './TwentyStepsAhead';
 
 function Apprentissage({ data: data, inputUnit: inputUnit, hiddenUnit: hiddenUnit }) {
     const [nmseValues, setNmseValues] = useState([]);
@@ -212,9 +212,6 @@ function Apprentissage({ data: data, inputUnit: inputUnit, hiddenUnit: hiddenUni
             {showChart &&
                 <div className="sdfsdf">
                     <Line data={dataForChart} options={options} className='chartjs' />
-                    {/* <div className="centred">
-                        <button type="button" onClick={showOneStepPrediction}>Prédiction</button>
-                    </div> */}
                     {oneStepPrediction && <OneStepAhead data={data} w={lastWeight} />}
                     {threeStepPrediction && <ThreeStepsAhead data={data} w={lastWeight} />}
                     {tenStepPrediction && <TenStepsAhead data={data} w={lastWeight} />}
