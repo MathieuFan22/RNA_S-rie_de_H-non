@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'Poppins-Regular';
-  src: url('assets/Fonts/Poppins-Regular.ttf') format('truetype');
+  src: url('../assets/Fonts/Poppins-Regular.ttf') format('truetype');
   /* You can also include additional font formats for better browser compatibility */
 }
 :root {
-  font-family: Poppins-Regular, Verdana, Geneva, Tahoma, sans-serif sans-serif;
+  font-family: Poppins-Regular, Arial, Helvetica, sans-serif;
   line-height: 1.5;
   font-weight: 400;
   /* user-select: none; */
