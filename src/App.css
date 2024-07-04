@@ -261,7 +261,30 @@ li {
 }
 
 /**/
+.values-container {
+  overflow: hidden;
+  transition: height 0.5s ease;
+  height: 0px;
+}
 
+.values-container.open {
+  height: auto; /* This class will be applied dynamically to set height based on content */
+}
+
+.values-list {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+}
+
+.values-list ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.values-list h3 {
+  margin-bottom: 10px;
+}
 
 /* .scrollButtons button {
   cursor: pointer;

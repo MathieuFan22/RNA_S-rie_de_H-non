@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Line } from 'react-chartjs-2';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowAltCircleDown, faArrowDown, faCaretDown, faCaretUp, faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 
 function OneStepAhead({ data, w }) {
     const tenDatas = data.slice(100, 115);
-    
+
     const sigmoid = (x) => (Math.exp(x) - Math.exp(-x)) / (Math.exp(x) + Math.exp(-x));
 
     const calculateActivation = (weights, inputs) => {
@@ -11,6 +13,8 @@ function OneStepAhead({ data, w }) {
     };
 
     const [predictions1Step, setPredictions1Step] = useState([]);
+    const [showValues, setShowValues] = useState(false);
+    const valuesContainerRef = useRef(null);
 
     const propagate1 = () => {
         const numPrototypes = tenDatas.length - 5;
@@ -28,13 +32,31 @@ function OneStepAhead({ data, w }) {
                 }
             }
 
-            newPredictions.push(V[V.length - 1][0]); // Ajouter la valeur prédite
+            newPredictions.push(V[V.length - 1][0]);
         }
 
         setPredictions1Step(newPredictions);
         setTimeout(() => {
-            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
         }, 100);
+    };
+
+    const toggleValuesVisibility = () => {
+        if (valuesContainerRef.current) {
+            if (showValues) {
+                valuesContainerRef.current.style.height = `${valuesContainerRef.current.scrollHeight}px`;
+                requestAnimationFrame(() => {
+                    valuesContainerRef.current.style.height = '0px';
+                });
+            } else {
+                valuesContainerRef.current.style.height = `${valuesContainerRef.current.scrollHeight}px`;
+                requestAnimationFrame(() => {
+                    valuesContainerRef.current.style.height = `${valuesContainerRef.current.scrollHeight}px`;
+                });
+            }
+
+            setShowValues(!showValues);
+        }
     };
 
     const chartData = {
@@ -57,6 +79,16 @@ function OneStepAhead({ data, w }) {
         ],
     };
 
+    useEffect(() => {
+        if (valuesContainerRef.current) {
+            if (showValues) {
+                valuesContainerRef.current.style.height = `${valuesContainerRef.current.scrollHeight}px`;
+            } else {
+                valuesContainerRef.current.style.height = '0px';
+            }
+        }
+    }, [showValues]);
+
     return (
         <div>
             <div className='centred'>
@@ -67,6 +99,38 @@ function OneStepAhead({ data, w }) {
                 <div>
                     <h2>Prédiction à un pas en avant:</h2>
                     <Line data={chartData} />
+
+                    <div className='centred'>
+                        <div onClick={toggleValuesVisibility} style={{ cursor: 'pointer' }}>
+                        <FontAwesomeIcon icon={showValues? faChevronDown: faChevronUp} size='1.5x'  />
+                        <span> Afficher les valeurs et ses erreurs </span>
+                        </div>
+                    </div>
+
+
+                    <div
+                        ref={valuesContainerRef}
+                        className={`values-container ${showValues ? 'open' : ''}`}
+                    >
+                        <div className='values-list'>
+                            <div>
+                                <h3>Valeurs existantes</h3>
+                                <ul>
+                                    {tenDatas.slice(5).map((value, index) => (
+                                        <li key={index}>x({index + 106}) : {value}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                            <div>
+                                <h3>Valeurs prédites</h3>
+                                <ul>
+                                    {predictions1Step.map((value, index) => (
+                                        <li key={index}>{value}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             )}
         </div>

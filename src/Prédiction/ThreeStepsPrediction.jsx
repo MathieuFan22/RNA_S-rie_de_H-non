@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Line } from 'react-chartjs-2';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 
 function ThreeStepsAhead({ data, w }) {
     const datas = data.slice(100, 120);
@@ -11,6 +13,8 @@ function ThreeStepsAhead({ data, w }) {
     };
 
     const [predictions3Step, setPredictions3Step] = useState([]);
+    const [showValues, setShowValues] = useState(false);
+    const valuesContainerRef = useRef(null);
 
     const propagate3 = () => {
         const numPrototypes = datas.length - 5;
@@ -43,8 +47,26 @@ function ThreeStepsAhead({ data, w }) {
 
         setPredictions3Step(newPredictions.slice(0, 10)); 
         setTimeout(() => {
-            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
         }, 100);
+    };
+
+    const toggleValuesVisibility = () => {
+        if (valuesContainerRef.current) {
+            if (showValues) {
+                valuesContainerRef.current.style.height = `${valuesContainerRef.current.scrollHeight}px`;
+                requestAnimationFrame(() => {
+                    valuesContainerRef.current.style.height = '0px';
+                });
+            } else {
+                valuesContainerRef.current.style.height = `${valuesContainerRef.current.scrollHeight}px`;
+                requestAnimationFrame(() => {
+                    valuesContainerRef.current.style.height = `${valuesContainerRef.current.scrollHeight}px`;
+                });
+            }
+
+            setShowValues(!showValues);
+        }
     };
 
     const chartData = {
@@ -67,6 +89,16 @@ function ThreeStepsAhead({ data, w }) {
         ],
     };
 
+    useEffect(() => {
+        if (valuesContainerRef.current) {
+            if (showValues) {
+                valuesContainerRef.current.style.height = `${valuesContainerRef.current.scrollHeight}px`;
+            } else {
+                valuesContainerRef.current.style.height = '0px';
+            }
+        }
+    }, [showValues]);
+
     return (
         <div>
             <div className='centred'>
@@ -77,6 +109,37 @@ function ThreeStepsAhead({ data, w }) {
                 <div>
                     <h2>Prédiction à trois pas en avant:</h2>
                     <Line data={chartData} />
+                    
+                    <div className='centred'>
+                        <div onClick={toggleValuesVisibility} style={{ cursor: 'pointer' }}>
+                            <FontAwesomeIcon icon={showValues ? faChevronDown : faChevronUp} size='1.5x' />
+                            <span> Afficher les valeurs et ses erreurs </span>
+                        </div>
+                    </div>
+
+                    <div
+                        ref={valuesContainerRef}
+                        className={`values-container ${showValues ? 'open' : ''}`}
+                    >
+                        <div className='values-list'>
+                            <div>
+                                <h3>Valeurs existantes</h3>
+                                <ul>
+                                    {datas.slice(9).map((value, index) => (
+                                        <li key={index}>x({index + 110}) : {value}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                            <div>
+                                <h3>Valeurs prédites</h3>
+                                <ul>
+                                    {predictions3Step.map((value, index) => (
+                                        <li key={index}>{value}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             )}
         </div>

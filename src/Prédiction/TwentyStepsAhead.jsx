@@ -77,6 +77,24 @@ function TwentyStepsAhead({ data, w }) {
                 <div>
                     <h2>Prédiction à vingt pas en avant:</h2>
                     <Line data={chartData} />
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Index</th>
+                                <th>Valeur existante</th>
+                                <th>Valeur prédite</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {datas.slice(5).map((existingValue, index) => (
+                                <tr key={index}>
+                                    <td>{index + 1}</td>
+                                    <td>{existingValue}</td>
+                                    <td>{predictions20Step[index]}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
                 </div>
             )}
         </div>
