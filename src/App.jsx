@@ -2,17 +2,18 @@ import React, { useState } from 'react';
 import './App.css';
 import FiftyValues from './Fifty Values/500Values';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons';
+import { faCaretDown, faCaretUp, faCircleInfo, faInfo, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import HenonSequences from './Architecture/HenonSequence';
 import calculateXY from './Fifty Values/get500Values';
 import Architecture from './Architecture/Architecture';
+import Landing from './Landing';
 
 const App = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [dropdowns, setDropdowns] = useState({
     architecture: false,
     prediction: false,
-    series: false 
+    series: false
   });
 
   const datas = calculateXY(0, 0, 500);
@@ -38,8 +39,8 @@ const App = () => {
           <h4>Series</h4> <FontAwesomeIcon icon={dropdowns.series ? faCaretUp : faCaretDown} />
         </div>
         <div className={`dropdown-content ${dropdowns.series ? 'visible' : ''}`}>
-          <button type="button" onClick={() => toPage(0)}>500 Valeurs</button>
-          <button type="button" onClick={() => toPage(1)}>Séquences</button>
+          <button type="button" onClick={() => toPage(1)}>500 Valeurs</button>
+          <button type="button" onClick={() => toPage(2)}>Séquences</button>
         </div>
 
 
@@ -48,16 +49,19 @@ const App = () => {
           <h4>Prédiction</h4> <FontAwesomeIcon icon={dropdowns.prediction ? faCaretUp : faCaretDown} />
         </div>
         <div className={`dropdown-content ${dropdowns.prediction ? 'visible' : ''}`}>
-        <button type="button" onClick={() => toPage(2)}>Prédiction</button>
+          <button type="button" onClick={() => toPage(3)}>Prédiction</button>
         </div>
-        
+
+        <span className='close'><FontAwesomeIcon icon={faInfoCircle} /> Alt+f4 pour quitter</span>
+
 
 
       </div>
       <div className='content'>
-        {currentPage === 0 && <FiftyValues />}
-        {currentPage === 1 && <HenonSequences data={data} />}
-        {currentPage === 2 && <Architecture data={data} />}
+        {currentPage === 0 && <Landing toPage={toPage}/>}
+        {currentPage === 1 && <FiftyValues />}
+        {currentPage === 2 && <HenonSequences data={data} />}
+        {currentPage === 3 && <Architecture data={data} />}
       </div>
     </div>
   );

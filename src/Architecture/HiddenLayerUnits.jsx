@@ -212,7 +212,7 @@ function HiddenLayerUnits({ data: data, inputUnit: inputUnit }) {
             {showChart && 
                 <div>
                     <Line data={dataForChart} options={options} className='chartjs' />
-                    <h4>Le Nombre d'unités de la couche d'entrée est {hiddenUnitIndex} </h4>
+                    <h4>Le Nombre d'unités de la couche cachée est {hiddenUnitIndex} </h4>
                 </div>
             }
             {showTrainButton &&

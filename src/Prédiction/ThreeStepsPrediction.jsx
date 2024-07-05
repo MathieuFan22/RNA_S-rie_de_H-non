@@ -70,7 +70,7 @@ function ThreeStepsAhead({ data, w }) {
     };
 
     const chartData = {
-        labels: Array.from({ length: datas.slice(9).length }, (_, i) => i + 1),
+        labels: Array.from({ length: 10 }, (_, i) => i + 1),
         datasets: [
             {
                 label: 'Valeurs prédites',
@@ -81,7 +81,7 @@ function ThreeStepsAhead({ data, w }) {
             },
             {
                 label: 'Valeurs existantes',
-                data: datas.slice(9),
+                data: datas.slice(5),
                 borderColor: 'rgba(75,192,192,1)',
                 backgroundColor: 'rgba(75,192,192,1)',
                 fill: false,
@@ -111,7 +111,7 @@ function ThreeStepsAhead({ data, w }) {
                     <Line data={chartData} />
                     
                     <div className='centred'>
-                        <div onClick={toggleValuesVisibility} style={{ cursor: 'pointer' }}>
+                        <div onClick={toggleValuesVisibility} className='display-dropdown'>
                             <FontAwesomeIcon icon={showValues ? faChevronDown : faChevronUp} size='1.5x' />
                             <span> Afficher les valeurs et ses erreurs </span>
                         </div>
@@ -125,8 +125,8 @@ function ThreeStepsAhead({ data, w }) {
                             <div>
                                 <h3>Valeurs existantes</h3>
                                 <ul>
-                                    {datas.slice(9).map((value, index) => (
-                                        <li key={index}>x({index + 110}) : {value}</li>
+                                    {datas.slice(5, 15).map((value, index) => (
+                                        <li key={index}>x({index + 106}) : {value}</li>
                                     ))}
                                 </ul>
                             </div>
@@ -134,7 +134,16 @@ function ThreeStepsAhead({ data, w }) {
                                 <h3>Valeurs prédites</h3>
                                 <ul>
                                     {predictions3Step.map((value, index) => (
-                                        <li key={index}>{value}</li>
+                                        <li key={index}>{value.toFixed(8)}</li>
+                                    ))}
+                                </ul>
+                            </div>
+
+                            <div>
+                                <h3>Différences</h3>
+                                <ul>
+                                    {datas.slice(5, 15).map((value, index) => (
+                                        <li key={index}>{Math.abs(Math.abs(value) - Math.abs(predictions3Step[index])).toFixed(8)}</li>
                                     ))}
                                 </ul>
                             </div>

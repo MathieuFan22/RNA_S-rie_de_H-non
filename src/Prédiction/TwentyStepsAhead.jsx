@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Line } from 'react-chartjs-2';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 
 function TwentyStepsAhead({ data, w }) {
-    const datas = data.slice(100, 150); 
-    
+    const datas = data.slice(100, 130);
+
     const sigmoid = (x) => (Math.exp(x) - Math.exp(-x)) / (Math.exp(x) + Math.exp(-x));
 
     const calculateActivation = (weights, inputs) => {
@@ -11,6 +13,8 @@ function TwentyStepsAhead({ data, w }) {
     };
 
     const [predictions20Step, setPredictions20Step] = useState([]);
+    const [showValues, setShowValues] = useState(false);
+    const valuesContainerRef = useRef(null);
 
     const propagate20 = () => {
         const numPrototypes = datas.length - 5;
@@ -46,26 +50,52 @@ function TwentyStepsAhead({ data, w }) {
             window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })
         }, 100);
     };
+    const toggleValuesVisibility = () => {
+        if (valuesContainerRef.current) {
+            if (showValues) {
+                valuesContainerRef.current.style.height = `${valuesContainerRef.current.scrollHeight}px`;
+                requestAnimationFrame(() => {
+                    valuesContainerRef.current.style.height = '0px';
+                });
+            } else {
+                valuesContainerRef.current.style.height = `${valuesContainerRef.current.scrollHeight}px`;
+                requestAnimationFrame(() => {
+                    valuesContainerRef.current.style.height = `${valuesContainerRef.current.scrollHeight}px`;
+                });
+            }
+
+            setShowValues(!showValues);
+        }
+    };
 
     const chartData = {
-        labels: Array.from({ length: datas.slice(40).length }, (_, i) => i + 1),
+        labels: Array.from({ length: 10 }, (_, i) => i + 1),
         datasets: [
             {
                 label: 'Valeurs prédites',
-                data: predictions20Step.slice(10),
+                data: predictions20Step,
                 borderColor: 'blue',
                 backgroundColor: 'rgba(0, 0, 255, 0.2)',
                 fill: false,
             },
             {
                 label: 'Valeurs existantes',
-                data: datas.slice(20),
+                data: datas.slice(5),
                 borderColor: 'rgba(75,192,192,1)',
                 backgroundColor: 'rgba(75,192,192,1)',
                 fill: false,
             },
         ],
     };
+    useEffect(() => {
+        if (valuesContainerRef.current) {
+            if (showValues) {
+                valuesContainerRef.current.style.height = `${valuesContainerRef.current.scrollHeight}px`;
+            } else {
+                valuesContainerRef.current.style.height = '0px';
+            }
+        }
+    }, [showValues]);
 
     return (
         <div>
@@ -75,26 +105,48 @@ function TwentyStepsAhead({ data, w }) {
 
             {predictions20Step.length > 0 && (
                 <div>
-                    <h2>Prédiction à vingt pas en avant:</h2>
+                    <h2>Prédiction à 20 pas en avant:</h2>
                     <Line data={chartData} />
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Index</th>
-                                <th>Valeur existante</th>
-                                <th>Valeur prédite</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {datas.slice(5).map((existingValue, index) => (
-                                <tr key={index}>
-                                    <td>{index + 1}</td>
-                                    <td>{existingValue}</td>
-                                    <td>{predictions20Step[index]}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+
+                    <div className='centred'>
+                        <div onClick={toggleValuesVisibility} className='display-dropdown'>
+                            <FontAwesomeIcon icon={showValues ? faChevronDown : faChevronUp} size='1.5x' />
+                            <span > Afficher les valeurs et ses erreurs </span>
+                        </div>
+                    </div>
+
+                    <div
+                        ref={valuesContainerRef}
+                        className={`values-container ${showValues ? 'open' : ''}`}
+                    >
+                        <div className='values-list'>
+                            <div>
+                                <h3>Valeurs existantes</h3>
+                                <ul>
+                                    {datas.slice(5, 15).map((value, index) => (
+                                        <li key={index}>x({index + 106}) : {value}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                            <div>
+                                <h3>Valeurs prédites</h3>
+                                <ul>
+                                    {predictions20Step.slice(0, 10).map((value, index) => (
+                                        <li key={index}>{value.toFixed(8)}</li>
+                                    ))}
+                                </ul>
+                            </div>
+
+                            <div>
+                                <h3>Différences</h3>
+                                <ul>
+                                    {datas.slice(5, 15).map((value, index) => (
+                                        <li key={index}>{Math.abs(Math.abs(value) - Math.abs(predictions20Step[index])).toFixed(8)}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             )}
         </div>

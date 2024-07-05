@@ -134,7 +134,7 @@ function Apprentissage({ data: data, inputUnit: inputUnit, hiddenUnit: hiddenUni
     const train = () => {
         const nmseResults = [];
 
-        for (let epoch = 1; epoch <= 100; epoch++) {
+        for (let epoch = 1; epoch <= 40; epoch++) {
             const networkOutputs = [];
             for (let i = 0; i < prototypes.length; i++) {
                 const networkOutput = trainWithPrototype(w, prototypes[i], desiredOutputs[i]);
@@ -165,7 +165,7 @@ function Apprentissage({ data: data, inputUnit: inputUnit, hiddenUnit: hiddenUni
     };
 
     const dataForChart = {
-        labels: Array.from({ length: 100 }, (_, index) => index + 1),
+        labels: Array.from({ length: 40 }, (_, index) => index + 1),
         datasets: [
             {
                 label: 'NMSE',

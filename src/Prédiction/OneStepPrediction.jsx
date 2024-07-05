@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Line } from 'react-chartjs-2';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowAltCircleDown, faArrowDown, faCaretDown, faCaretUp, faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
+import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 
 function OneStepAhead({ data, w }) {
     const tenDatas = data.slice(100, 115);
@@ -101,12 +101,11 @@ function OneStepAhead({ data, w }) {
                     <Line data={chartData} />
 
                     <div className='centred'>
-                        <div onClick={toggleValuesVisibility} style={{ cursor: 'pointer' }}>
-                        <FontAwesomeIcon icon={showValues? faChevronDown: faChevronUp} size='1.5x'  />
-                        <span> Afficher les valeurs et ses erreurs </span>
+                        <div onClick={toggleValuesVisibility} className='display-dropdown'>
+                            <FontAwesomeIcon icon={showValues ? faChevronDown : faChevronUp} size='1.5x' />
+                            <span> Afficher les valeurs et ses erreurs </span>
                         </div>
                     </div>
-
 
                     <div
                         ref={valuesContainerRef}
@@ -125,7 +124,16 @@ function OneStepAhead({ data, w }) {
                                 <h3>Valeurs prédites</h3>
                                 <ul>
                                     {predictions1Step.map((value, index) => (
-                                        <li key={index}>{value}</li>
+                                        <li key={index}>{value.toFixed(8)}</li>
+                                    ))}
+                                </ul>
+                            </div>
+
+                            <div>
+                                <h4>Différences</h4>
+                                <ul>
+                                    {tenDatas.slice(5).map((value, index) => (
+                                        <li key={index}>{Math.abs(Math.abs(value) - Math.abs(predictions1Step[index])).toFixed(8)}</li>
                                     ))}
                                 </ul>
                             </div>
